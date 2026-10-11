@@ -10,7 +10,7 @@ The Stop hook reads this file: unchecked boxes mean "not finished".
 - [x] 0.2 Create `.venv`, install `requirements.txt`, confirm `import sentence_transformers` works (or apply the
       fastembed fallback from CLAUDE.md section 5). Record Python version and embedding backend in `docs/DECISIONS.md`.
       Check: `.venv/Scripts/python.exe -c "import numpy, rank_bm25, gradio, pytest, requests, bs4"` exits 0.
-- [ ] 0.3 Run `scripts/check_env.py`; record the mode (`llm` with provider name, or `retrieval-only`) in `docs/DECISIONS.md`.
+- [x] 0.3 Run `scripts/check_env.py`; record the mode (`llm` with provider name, or `retrieval-only`) in `docs/DECISIONS.md`.
 - [ ] 0.4 Create package skeleton exactly as `docs/SPEC.md` section 2 (empty modules with docstrings), `pytest.ini`
       present, `tests/test_smoke.py` imports `gcoderag` and passes. Check: `pytest -q` shows `1 passed`.
 
