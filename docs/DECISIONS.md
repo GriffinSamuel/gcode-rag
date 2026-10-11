@@ -15,3 +15,11 @@ Also log: escalations to `fable-escalation` (brief + outcome), eval iterations (
 - 2026-10-11 15:05 | haas | Haas skipped: robots.txt readable but the G-code page returns HTTP 403; STATUS.json records status=skipped. Corpus = LinuxCNC only | CLAUDE.md section 5 fallback; parser still covered by a fixture test
 - 2026-10-11 15:15 | chunker | Corpus: 150 docs, 276 chunks (median 191 words, max 303), 112 distinct codes. Long paragraphs split into windows of target-overlap words, then packed with a 40-word tail overlap; a title-only unit (<20 words) always merges with the next unit | Avoids double overlap and title-only chunks while keeping the title in the first chunk
 - 2026-10-11 15:35 | indexing | Index text = normalize_codes(text), with the chunk title prepended for non-first chunks (both dense and BM25); dense index = 276 x 384 bge-small, built in ~53 s on CPU | Later chunks of a section otherwise lose the code name, hurting code lookups
+- 2026-10-11 15:45 | smoke test 2.3 | hybrid 5/6 in top 5 (dense 4/6, bm25 4/6); passes the >= 5/6 check | Results below. Miss: the paraphrase "pause ... 2 seconds" ranks M60/M0-M1 (pause wording) above G4 Dwell; revisit only if eval Recall@5 < 0.75
+  | query | expected | hybrid rank | top 3 |
+  | how do I pause the program for 2 seconds | linuxcnc:gcode:g4 | >10 | m60, m0-m1, m66 |
+  | rapid move | linuxcnc:gcode:g0 | 1 | g0, g81, g33 |
+  | start the spindle clockwise | linuxcnc:mcode:m3-m4-m5 | 1 | m3-m4-m5, g74, m19 |
+  | cut a clockwise arc | linuxcnc:gcode:g2-g3 | 1 | g2-g3, control-and-data-components, g76 |
+  | end of program and rewind | linuxcnc:mcode:m2-m30 | 2 | g68.2, m2-m30, ocode:subroutines |
+  | what does G01 do | linuxcnc:gcode:g1 | 2 | g71-g72, g1, sample-programs-using-offsets |

@@ -32,7 +32,7 @@ The Stop hook reads this file: unchecked boxes mean "not finished".
 - [x] 2.2 `gcoderag/index.py`: `DenseIndex`, `BM25Index`, `HybridRetriever` with RRF and code normalization
       (SPEC 4.2-4.4); `scripts/build_index.py` writes `data/index/embeddings.npy` + `meta.json`.
       Check: tests pass; `meta.json.num_vectors` equals the chunk count.
-- [ ] 2.3 Smoke test: run `python -m gcoderag.cli search` for the 6 queries in SPEC 4.6 and confirm the expected
+- [x] 2.3 Smoke test: run `python -m gcoderag.cli search` for the 6 queries in SPEC 4.6 and confirm the expected
       doc appears in the top 5 for at least 5 of 6. Log the results table in `docs/DECISIONS.md`.
 
 ## Phase 3: Evaluation
