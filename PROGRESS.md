@@ -41,7 +41,7 @@ The Stop hook reads this file: unchecked boxes mean "not finished".
       `gold_doc_ids` entry exists in `data/corpus/docs.jsonl`, 1-3 robust `answer_keywords` each.
 - [x] 3.2 `gcoderag/evaluate.py` + `scripts/run_eval.py`: configs `dense_baseline`, `bm25_only`, `hybrid_rrf`
       (SPEC 5); writes `results/results.json` and `results/results.md`. Unit tests cover recall/MRR math on toy data.
-- [ ] 3.3 Best config Recall@5 >= 0.75. If not, improve per CLAUDE.md section 5 and re-run; log each iteration
+- [x] 3.3 Best config Recall@5 >= 0.75. If not, improve per CLAUDE.md section 5 and re-run; log each iteration
       (before/after numbers) in `docs/DECISIONS.md`.
 
 ## Phase 4: Generation and validation
