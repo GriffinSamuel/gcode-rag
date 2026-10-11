@@ -21,7 +21,7 @@ The Stop hook reads this file: unchecked boxes mean "not finished".
       Check: `.venv/Scripts/python.exe -m gcoderag.ingest.linuxcnc` prints `docs: N` with N >= 120.
 - [x] 1.2 `gcoderag/ingest/haas.py` (best effort, SPEC 3.2): robots check, download, parse, or write STATUS.json
       explaining the skip. Check: `data/raw/haas/STATUS.json` exists with `"status": "ok" | "skipped"`.
-- [ ] 1.3 `gcoderag/ingest/chunker.py` + `scripts/build_corpus.py` produce `data/corpus/docs.jsonl`,
+- [x] 1.3 `gcoderag/ingest/chunker.py` + `scripts/build_corpus.py` produce `data/corpus/docs.jsonl`,
       `data/corpus/chunks.jsonl`, `data/corpus/stats.json` (SPEC 3.4). Tests for parser and chunker pass.
       Check: chunks >= 150, distinct codes >= 60, every chunk has all required keys.
 
