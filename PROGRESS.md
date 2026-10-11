@@ -16,7 +16,7 @@ The Stop hook reads this file: unchecked boxes mean "not finished".
 
 ## Phase 1: Corpus
 
-- [ ] 1.1 `gcoderag/ingest/linuxcnc.py` downloads the AsciiDoc sources (SPEC 3.1) into `data/raw/linuxcnc/` and parses
+- [x] 1.1 `gcoderag/ingest/linuxcnc.py` downloads the AsciiDoc sources (SPEC 3.1) into `data/raw/linuxcnc/` and parses
       them into documents (SPEC 3.3). Tests use the fixture snippet in `tests/fixtures/linuxcnc_snippet.adoc`.
       Check: `.venv/Scripts/python.exe -m gcoderag.ingest.linuxcnc` prints `docs: N` with N >= 120.
 - [ ] 1.2 `gcoderag/ingest/haas.py` (best effort, SPEC 3.2): robots check, download, parse, or write STATUS.json

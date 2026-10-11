@@ -1,0 +1,51 @@
+:lang: en
+:toc:
+
+[[cha:g-codes]]
+= G-Codes
+
+== Conventions
+
+In the G-code prototypes the hyphen (-) stands for a real value and (<>) denotes an optional item.
+// a line comment that must disappear
+
+[[gcode:g4]]
+== G4 Dwell(((G4 Dwell)))
+
+[source,ngc]
+----
+G4 P-
+----
+
+* 'P' - seconds to dwell (floating point)
+
+////
+This comment block must be removed from the text.
+////
+
+The P number is the time in seconds that all axes will remain unmoving.
+See also <<gcode:g1,G1>> for feed moves.
+
+.G4 Example Line
+[source,ngc]
+----
+G4 P0.5 (wait for 0.5 seconds before proceeding)
+----
+
+[[gcode:g10-l2]]
+== G10 L2 Set Coordinate System(((G10 L2 Coordinate System)))
+
+[width="75%",options="header"]
+|===
+|Code |Meaning
+|G10 L2 P1 |Set the G54 origin
+|===
+
+image::images/g10.png[]
+
+G10 L2 offsets the origin of the coordinate system specified by P.
+
+[[gcode:tiny]]
+== Tiny
+
+Short.
