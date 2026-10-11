@@ -29,7 +29,7 @@ The Stop hook reads this file: unchecked boxes mean "not finished".
 
 - [x] 2.1 `gcoderag/embed.py`: `Embedder` protocol, `SentenceTransformerEmbedder`, `FastEmbedEmbedder`,
       `FakeEmbedder` (SPEC 4.1). Unit tests use `FakeEmbedder` only.
-- [ ] 2.2 `gcoderag/index.py`: `DenseIndex`, `BM25Index`, `HybridRetriever` with RRF and code normalization
+- [x] 2.2 `gcoderag/index.py`: `DenseIndex`, `BM25Index`, `HybridRetriever` with RRF and code normalization
       (SPEC 4.2-4.4); `scripts/build_index.py` writes `data/index/embeddings.npy` + `meta.json`.
       Check: tests pass; `meta.json.num_vectors` equals the chunk count.
 - [ ] 2.3 Smoke test: run `python -m gcoderag.cli search` for the 6 queries in SPEC 4.6 and confirm the expected

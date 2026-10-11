@@ -178,3 +178,19 @@ def build_retriever(chunks: list[Chunk], embedder: Embedder, index_dir: Path | N
         if index_dir is not None:
             dense.save(index_dir)
     return HybridRetriever(chunks, dense, BM25Index(chunks), embedder)
+
+
+def load_retriever(root: Path | None = None, embedder: Embedder | None = None) -> HybridRetriever:
+    """Load chunks and the saved index from the repo `data/` tree (building the index if missing)."""
+    from gcoderag.config import get_paths, load_settings
+    from gcoderag.embed import get_embedder
+    from gcoderag.ingest import load_chunks
+
+    load_settings()
+    paths = get_paths(root)
+    chunks = load_chunks(paths.corpus / "chunks.jsonl")
+    if embedder is None:
+        meta_path = paths.index / "meta.json"
+        model = json.loads(meta_path.read_text(encoding="utf-8"))["embedding_model"] if meta_path.exists() else None
+        embedder = get_embedder(model)
+    return build_retriever(chunks, embedder, paths.index)
