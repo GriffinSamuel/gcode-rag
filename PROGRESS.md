@@ -37,7 +37,7 @@ The Stop hook reads this file: unchecked boxes mean "not finished".
 
 ## Phase 3: Evaluation
 
-- [ ] 3.1 Write `eval/questions.jsonl` following `docs/EVAL.md`: >= 40 questions, >= 4 categories, every
+- [x] 3.1 Write `eval/questions.jsonl` following `docs/EVAL.md`: >= 40 questions, >= 4 categories, every
       `gold_doc_ids` entry exists in `data/corpus/docs.jsonl`, 1-3 robust `answer_keywords` each.
 - [ ] 3.2 `gcoderag/evaluate.py` + `scripts/run_eval.py`: configs `dense_baseline`, `bm25_only`, `hybrid_rrf`
       (SPEC 5); writes `results/results.json` and `results/results.md`. Unit tests cover recall/MRR math on toy data.

@@ -1,0 +1,56 @@
+{"id": "q001", "category": "code_lookup", "question": "What does G4 do and which word sets the dwell time?", "gold_doc_ids": ["linuxcnc:gcode:g4"], "answer_keywords": ["dwell", "p"]}
+{"id": "q002", "category": "code_lookup", "question": "How do I make a rapid positioning move?", "gold_doc_ids": ["linuxcnc:gcode:g0"], "answer_keywords": ["g0"]}
+{"id": "q003", "category": "parameters", "question": "Which words can I use to define the center of an arc with G2 or G3?", "gold_doc_ids": ["linuxcnc:gcode:g2-g3"], "answer_keywords": ["i", "j"]}
+{"id": "q004", "category": "code_lookup", "question": "I want the spindle to turn clockwise. Which M code do I use?", "gold_doc_ids": ["linuxcnc:mcode:m3-m4-m5"], "answer_keywords": ["m3"]}
+{"id": "q005", "category": "code_lookup", "question": "How do I end the program and rewind to the start?", "gold_doc_ids": ["linuxcnc:mcode:m2-m30"], "answer_keywords": ["m30"]}
+{"id": "q006", "category": "code_lookup", "question": "Which code performs a tool change?", "gold_doc_ids": ["linuxcnc:mcode:m6"], "answer_keywords": ["m6"]}
+{"id": "q007", "category": "code_lookup", "question": "What is the difference between M0 and M1?", "gold_doc_ids": ["linuxcnc:mcode:m0-m1"], "answer_keywords": ["optional"]}
+{"id": "q008", "category": "parameters", "question": "What does the F word mean in a feed move at programmed feed rate?", "gold_doc_ids": ["linuxcnc:gcode:g1", "linuxcnc:sec:set-feed-rate"], "answer_keywords": ["feed"]}
+{"id": "q009", "category": "code_lookup", "question": "How do I turn flood coolant on and later switch all coolant off?", "gold_doc_ids": ["linuxcnc:mcode:m7-m8-m9"], "answer_keywords": ["m8", "m9"]}
+{"id": "q010", "category": "modal_groups", "question": "How do I switch between absolute and incremental distance mode?", "gold_doc_ids": ["linuxcnc:gcode:g90-g91"], "answer_keywords": ["g90", "g91"]}
+{"id": "q011", "category": "code_lookup", "question": "How do I tell the controller that my program dimensions are in millimeters?", "gold_doc_ids": ["linuxcnc:gcode:g20-g21"], "answer_keywords": ["g21"]}
+{"id": "q012", "category": "code_lookup", "question": "Which code selects the XZ plane for arcs?", "gold_doc_ids": ["linuxcnc:gcode:g17-g19.1"], "answer_keywords": ["g18"]}
+{"id": "q013", "category": "parameters", "question": "How do I apply a tool length offset taken from the tool table?", "gold_doc_ids": ["linuxcnc:gcode:g43", "linuxcnc:sec-tool-length-compensation"], "answer_keywords": ["g43"]}
+{"id": "q014", "category": "code_lookup", "question": "How do I cancel tool length compensation?", "gold_doc_ids": ["linuxcnc:gcode:g49"], "answer_keywords": ["g49"]}
+{"id": "q015", "category": "code_lookup", "question": "How do I turn cutter radius compensation off?", "gold_doc_ids": ["linuxcnc:gcode:g40"], "answer_keywords": ["g40"]}
+{"id": "q016", "category": "parameters", "question": "Which side of the programmed path does G41 put the tool on?", "gold_doc_ids": ["linuxcnc:gcode:g41-g42"], "answer_keywords": ["left"]}
+{"id": "q017", "category": "code_lookup", "question": "How can I move in machine coordinates for a single line, ignoring work offsets?", "gold_doc_ids": ["linuxcnc:gcode:g53"], "answer_keywords": ["g53"]}
+{"id": "q018", "category": "code_lookup", "question": "How do I select the second work coordinate system after the default one?", "gold_doc_ids": ["linuxcnc:gcode:g54-g59.3"], "answer_keywords": ["g55"]}
+{"id": "q019", "category": "parameters", "question": "How do I set the origin of a work coordinate system from inside the program?", "gold_doc_ids": ["linuxcnc:gcode:g10-l2", "linuxcnc:gcode:g10-l20"], "answer_keywords": ["g10"]}
+{"id": "q020", "category": "canned_cycles", "question": "Which canned cycle drills in pecks to clear the chips?", "gold_doc_ids": ["linuxcnc:gcode:g83", "linuxcnc:gcode:g73"], "answer_keywords": ["peck"]}
+{"id": "q021", "category": "canned_cycles", "question": "How do I cancel an active canned cycle?", "gold_doc_ids": ["linuxcnc:gcode:g80"], "answer_keywords": ["g80"]}
+{"id": "q022", "category": "canned_cycles", "question": "In a drilling cycle, what does the R word set?", "gold_doc_ids": ["linuxcnc:gcode:g80-g89", "linuxcnc:gcode:g81"], "answer_keywords": ["retract"]}
+{"id": "q023", "category": "canned_cycles", "question": "What do G98 and G99 control at the end of a canned cycle?", "gold_doc_ids": ["linuxcnc:gcode:g98-g99"], "answer_keywords": ["retract"]}
+{"id": "q024", "category": "canned_cycles", "question": "Which cycle drills a hole and dwells at the bottom?", "gold_doc_ids": ["linuxcnc:gcode:g82"], "answer_keywords": ["g82", "dwell"]}
+{"id": "q025", "category": "canned_cycles", "question": "How do I do rigid tapping synchronized with the spindle?", "gold_doc_ids": ["linuxcnc:gcode:g33.1", "linuxcnc:gcode:g84"], "answer_keywords": ["tap"]}
+{"id": "q026", "category": "canned_cycles", "question": "What is the simplest drilling canned cycle?", "gold_doc_ids": ["linuxcnc:gcode:g81"], "answer_keywords": ["g81"]}
+{"id": "q027", "category": "modal_groups", "question": "What is a modal group and why can two codes from the same group not share a line?", "gold_doc_ids": ["linuxcnc:gcode:modal-groups"], "answer_keywords": ["modal"]}
+{"id": "q028", "category": "modal_groups", "question": "Which feed rate modes exist, like inverse time and units per minute?", "gold_doc_ids": ["linuxcnc:gcode:g93-g94-g95"], "answer_keywords": ["g93", "g94"]}
+{"id": "q029", "category": "modal_groups", "question": "How do I select constant surface speed for the spindle?", "gold_doc_ids": ["linuxcnc:gcode:g96-g97"], "answer_keywords": ["g96"]}
+{"id": "q030", "category": "syntax", "question": "How do I write a comment in a line of G-code?", "gold_doc_ids": ["linuxcnc:gcode:comments"], "answer_keywords": ["comment"]}
+{"id": "q031", "category": "syntax", "question": "In what order are the items on one line executed?", "gold_doc_ids": ["linuxcnc:gcode:order-of-execution"], "answer_keywords": ["order"]}
+{"id": "q032", "category": "syntax", "question": "What does the block delete character at the start of a line do?", "gold_doc_ids": ["linuxcnc:sec-format-of-a-line"], "answer_keywords": ["block delete"]}
+{"id": "q033", "category": "syntax", "question": "How do I write a subroutine and call it?", "gold_doc_ids": ["linuxcnc:ocode:subroutines"], "answer_keywords": ["sub", "call"]}
+{"id": "q034", "category": "syntax", "question": "How do I write a while loop in a program?", "gold_doc_ids": ["linuxcnc:ocode:looping"], "answer_keywords": ["while"]}
+{"id": "q035", "category": "syntax", "question": "How do I branch with an if / else condition in a part program?", "gold_doc_ids": ["linuxcnc:ocode:conditional"], "answer_keywords": ["if"]}
+{"id": "q036", "category": "syntax", "question": "How do numbered parameters like #1 work?", "gold_doc_ids": ["linuxcnc:sec:overview-parameters"], "answer_keywords": ["parameter"]}
+{"id": "q037", "category": "safety_practice", "question": "What are recommended best practices for writing G-code programs?", "gold_doc_ids": ["linuxcnc:gcode:best-practices"], "answer_keywords": ["program"]}
+{"id": "q038", "category": "safety_practice", "question": "How do I send the machine to a stored safe position, for example before a tool change?", "gold_doc_ids": ["linuxcnc:gcode:g28-g28.1", "linuxcnc:gcode:g30-g30.1"], "answer_keywords": ["predefined"]}
+{"id": "q039", "category": "parameters", "question": "How do I set the spindle speed?", "gold_doc_ids": ["linuxcnc:sec:set-spindle-speed", "linuxcnc:mcode:m3-m4-m5"], "answer_keywords": ["speed"]}
+{"id": "q040", "category": "parameters", "question": "How do I choose which tool gets loaded at the next tool change?", "gold_doc_ids": ["linuxcnc:sec:select-tool", "linuxcnc:mcode:m6"], "answer_keywords": ["tool"]}
+{"id": "q041", "category": "code_lookup", "question": "How do I make the program wait for a digital input before continuing?", "gold_doc_ids": ["linuxcnc:mcode:m66"], "answer_keywords": ["m66"]}
+{"id": "q042", "category": "code_lookup", "question": "How do I probe toward the workpiece until the probe touches?", "gold_doc_ids": ["linuxcnc:gcode:g38"], "answer_keywords": ["probe"]}
+{"id": "q043", "category": "canned_cycles", "question": "How do I cut a thread on a lathe with a multi-pass cycle?", "gold_doc_ids": ["linuxcnc:gcode:g76"], "answer_keywords": ["g76"]}
+{"id": "q044", "category": "parameters", "question": "How do I blend corners within a tolerance instead of stopping at each one?", "gold_doc_ids": ["linuxcnc:gcode:g64"], "answer_keywords": ["g64"]}
+{"id": "q045", "category": "safety_practice", "question": "How can I prevent the operator overrides from changing feed and speed during a critical cut?", "gold_doc_ids": ["linuxcnc:mcode:m48-m49", "linuxcnc:mcode:m50", "linuxcnc:mcode:m51"], "answer_keywords": ["override"]}
+{"id": "q046", "category": "code_lookup", "question": "How do I make the machine stop exactly at each programmed point before the next move?", "gold_doc_ids": ["linuxcnc:gcode:g61", "linuxcnc:gcode:g61.1"], "answer_keywords": ["exact"]}
+{"id": "q047", "category": "safety_practice", "question": "What happens to the spindle and coolant when the program ends with M2?", "gold_doc_ids": ["linuxcnc:mcode:m2-m30"], "answer_keywords": ["spindle"]}
+{"id": "q048", "category": "syntax", "question": "How do I save the modal state in a subroutine and restore it later?", "gold_doc_ids": ["linuxcnc:mcode:m70", "linuxcnc:mcode:m72", "linuxcnc:mcode:m73"], "answer_keywords": ["modal"]}
+{"id": "q049", "category": "modal_groups", "question": "Which code makes arc center offsets I and J absolute instead of incremental?", "gold_doc_ids": ["linuxcnc:gcode:g90.1-g91.1"], "answer_keywords": ["g90.1"]}
+{"id": "q050", "category": "safety_practice", "question": "How do I pause the program for two seconds?", "gold_doc_ids": ["linuxcnc:gcode:g4"], "answer_keywords": ["g4"]}
+{"id": "q051", "category": "code_lookup", "question": "What does G33 do?", "gold_doc_ids": ["linuxcnc:gcode:g33"], "answer_keywords": ["spindle"]}
+{"id": "q052", "category": "code_lookup", "question": "What is G5.2 used for?", "gold_doc_ids": ["linuxcnc:gcode:g5.2-g5.3"], "answer_keywords": ["nurbs"]}
+{"id": "q053", "category": "code_lookup", "question": "What does M19 do?", "gold_doc_ids": ["linuxcnc:mcode:m19"], "answer_keywords": ["orient"]}
+{"id": "q054", "category": "parameters", "question": "What is G92 used for and how is it different from G54?", "gold_doc_ids": ["linuxcnc:gcode:g92", "linuxcnc:sec:g92-axes-offsets"], "answer_keywords": ["g92"]}
+{"id": "q055", "category": "code_lookup", "question": "What does M61 do?", "gold_doc_ids": ["linuxcnc:mcode:m61"], "answer_keywords": ["tool"]}
+{"id": "q056", "category": "code_lookup", "question": "What does G43.1 do?", "gold_doc_ids": ["linuxcnc:gcode:g43.1"], "answer_keywords": ["dynamic"]}

@@ -23,3 +23,4 @@ Also log: escalations to `fable-escalation` (brief + outcome), eval iterations (
   | cut a clockwise arc | linuxcnc:gcode:g2-g3 | 1 | g2-g3, control-and-data-components, g76 |
   | end of program and rewind | linuxcnc:mcode:m2-m30 | 2 | g68.2, m2-m30, ocode:subroutines |
   | what does G01 do | linuxcnc:gcode:g1 | 2 | g71-g72, g1, sample-programs-using-offsets |
+- 2026-10-11 16:00 | eval set | 56 questions, 6 categories (no haas_specific: Haas skipped); 44 questions name no code; every gold id and every keyword verified against data/corpus/docs.jsonl by script | EVAL.md rules; keywords picked from gold text so a paraphrased correct answer still contains them
