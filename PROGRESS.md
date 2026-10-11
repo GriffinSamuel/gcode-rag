@@ -46,7 +46,7 @@ The Stop hook reads this file: unchecked boxes mean "not finished".
 
 ## Phase 4: Generation and validation
 
-- [ ] 4.1 `gcoderag/llm.py`: `LLM` protocol, `AnthropicLLM`, `OpenAICompatibleLLM`, `FakeLLM`, `get_llm_from_env()`
+- [x] 4.1 `gcoderag/llm.py`: `LLM` protocol, `AnthropicLLM`, `OpenAICompatibleLLM`, `FakeLLM`, `get_llm_from_env()`
       (SPEC 6.1). Tests use `FakeLLM`.
 - [ ] 4.2 `gcoderag/rag.py`: grounded answers with `[n]` citations and the `NOT_IN_DOCS` refusal path (SPEC 6.2). Tests with `FakeLLM`.
 - [ ] 4.3 `gcoderag/validator.py`: parser + all rules E001-E010 and W101-W105 + CLI (SPEC 7). At least 15 unit
