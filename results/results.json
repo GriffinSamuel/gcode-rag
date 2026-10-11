@@ -1,0 +1,1563 @@
+{
+  "generated_at": "2026-10-11T21:43:00Z",
+  "corpus": {
+    "num_docs": 150,
+    "num_chunks": 276,
+    "sources": {
+      "linuxcnc": 150,
+      "haas": 0
+    }
+  },
+  "embedding_model": "BAAI/bge-small-en-v1.5",
+  "n_questions": 56,
+  "configs": [
+    {
+      "name": "dense_baseline",
+      "mode": "dense",
+      "description": "bge-small cosine only",
+      "recall_at_1": 0.5714,
+      "recall_at_5": 0.9464,
+      "mrr": 0.6961
+    },
+    {
+      "name": "bm25_only",
+      "mode": "bm25",
+      "description": "BM25 over normalized tokens",
+      "recall_at_1": 0.5714,
+      "recall_at_5": 0.8571,
+      "mrr": 0.7008
+    },
+    {
+      "name": "hybrid_rrf",
+      "mode": "hybrid",
+      "description": "dense + BM25 fused with RRF k=60",
+      "recall_at_1": 0.75,
+      "recall_at_5": 0.9464,
+      "mrr": 0.8363
+    }
+  ],
+  "best_config": "hybrid_rrf",
+  "answer_eval": {
+    "status": "skipped_no_llm_key"
+  },
+  "per_question": {
+    "dense_baseline": [
+      {
+        "id": "q001",
+        "rank": 1,
+        "top": [
+          "linuxcnc:gcode:g4",
+          "linuxcnc:gcode:g74",
+          "linuxcnc:gcode:g84"
+        ]
+      },
+      {
+        "id": "q002",
+        "rank": 4,
+        "top": [
+          "linuxcnc:sec:select-tool",
+          "linuxcnc:gcode:g33",
+          "linuxcnc:gcode:g33.1"
+        ]
+      },
+      {
+        "id": "q003",
+        "rank": 1,
+        "top": [
+          "linuxcnc:gcode:g2-g3",
+          "linuxcnc:gcode:best-practices",
+          "linuxcnc:gcode:g90.1-g91.1"
+        ]
+      },
+      {
+        "id": "q004",
+        "rank": 1,
+        "top": [
+          "linuxcnc:mcode:m3-m4-m5",
+          "linuxcnc:sec:overview-parameters",
+          "linuxcnc:mcode:m19"
+        ]
+      },
+      {
+        "id": "q005",
+        "rank": 4,
+        "top": [
+          "linuxcnc:ocode:looping",
+          "linuxcnc:ocode:subroutines",
+          "linuxcnc:mcode:m73"
+        ]
+      },
+      {
+        "id": "q006",
+        "rank": 3,
+        "top": [
+          "linuxcnc:sec:select-tool",
+          "linuxcnc:sec:tool-table",
+          "linuxcnc:mcode:m6"
+        ]
+      },
+      {
+        "id": "q007",
+        "rank": 3,
+        "top": [
+          "linuxcnc:mcode:m100-m199",
+          "linuxcnc:sec-m-code-quick-reference-table",
+          "linuxcnc:mcode:m0-m1"
+        ]
+      },
+      {
+        "id": "q008",
+        "rank": 3,
+        "top": [
+          "linuxcnc:gcode:g93-g94-g95",
+          "linuxcnc:sec-linear-and-rotary-axis",
+          "linuxcnc:sec:set-feed-rate"
+        ]
+      },
+      {
+        "id": "q009",
+        "rank": 1,
+        "top": [
+          "linuxcnc:mcode:m7-m8-m9",
+          "linuxcnc:gcode:g40",
+          "linuxcnc:gcode:g80"
+        ]
+      },
+      {
+        "id": "q010",
+        "rank": 1,
+        "top": [
+          "linuxcnc:gcode:g90-g91",
+          "linuxcnc:gcode:g90.1-g91.1",
+          "linuxcnc:sec:overview-parameters"
+        ]
+      },
+      {
+        "id": "q011",
+        "rank": 4,
+        "top": [
+          "linuxcnc:sec:overview-parameters",
+          "linuxcnc:sec-tool-length-compensation",
+          "linuxcnc:gcode:best-practices"
+        ]
+      },
+      {
+        "id": "q012",
+        "rank": 1,
+        "top": [
+          "linuxcnc:gcode:g17-g19.1",
+          "linuxcnc:gcode:g2-g3",
+          "linuxcnc:sec-control-and-data-components"
+        ]
+      },
+      {
+        "id": "q013",
+        "rank": 3,
+        "top": [
+          "linuxcnc:sec:touch-off",
+          "linuxcnc:sec:tool-table",
+          "linuxcnc:sec-tool-length-compensation"
+        ]
+      },
+      {
+        "id": "q014",
+        "rank": 1,
+        "top": [
+          "linuxcnc:gcode:g49",
+          "linuxcnc:gcode:g40",
+          "linuxcnc:sec-tool-length-compensation"
+        ]
+      },
+      {
+        "id": "q015",
+        "rank": 1,
+        "top": [
+          "linuxcnc:gcode:g40",
+          "linuxcnc:sec:cutter-radius-compensation",
+          "linuxcnc:gcode:g41-g42"
+        ]
+      },
+      {
+        "id": "q016",
+        "rank": 1,
+        "top": [
+          "linuxcnc:gcode:g41-g42",
+          "linuxcnc:gcode:g41.1-g42.1",
+          "linuxcnc:sec:cutter-radius-compensation"
+        ]
+      },
+      {
+        "id": "q017",
+        "rank": null,
+        "top": [
+          "linuxcnc:gcode:g92",
+          "linuxcnc:sec:overview-parameters",
+          "linuxcnc:gcode:g43.2"
+        ]
+      },
+      {
+        "id": "q018",
+        "rank": 5,
+        "top": [
+          "linuxcnc:sec:overview-parameters",
+          "linuxcnc:gcode:g10-l2",
+          "linuxcnc:sec-coordinate-systems"
+        ]
+      },
+      {
+        "id": "q019",
+        "rank": 2,
+        "top": [
+          "linuxcnc:sec:overview-parameters",
+          "linuxcnc:gcode:g10-l2",
+          "linuxcnc:gcode:g92"
+        ]
+      },
+      {
+        "id": "q020",
+        "rank": 3,
+        "top": [
+          "linuxcnc:gcode:g80-g89",
+          "linuxcnc:gcode:g80",
+          "linuxcnc:gcode:g83"
+        ]
+      },
+      {
+        "id": "q021",
+        "rank": 1,
+        "top": [
+          "linuxcnc:gcode:g80",
+          "linuxcnc:gcode:g98-g99",
+          "linuxcnc:gcode:g80-g89"
+        ]
+      },
+      {
+        "id": "q022",
+        "rank": 1,
+        "top": [
+          "linuxcnc:gcode:g81",
+          "linuxcnc:gcode:g80-g89",
+          "linuxcnc:gcode:g83"
+        ]
+      },
+      {
+        "id": "q023",
+        "rank": 1,
+        "top": [
+          "linuxcnc:gcode:g98-g99",
+          "linuxcnc:gcode:g80-g89",
+          "linuxcnc:gcode:g80"
+        ]
+      },
+      {
+        "id": "q024",
+        "rank": 1,
+        "top": [
+          "linuxcnc:gcode:g82",
+          "linuxcnc:gcode:g81",
+          "linuxcnc:gcode:g83"
+        ]
+      },
+      {
+        "id": "q025",
+        "rank": 1,
+        "top": [
+          "linuxcnc:gcode:g33.1",
+          "linuxcnc:gcode:g74",
+          "linuxcnc:gcode:g84"
+        ]
+      },
+      {
+        "id": "q026",
+        "rank": 4,
+        "top": [
+          "linuxcnc:gcode:g80-g89",
+          "linuxcnc:gcode:g80",
+          "linuxcnc:gcode:g82"
+        ]
+      },
+      {
+        "id": "q027",
+        "rank": 1,
+        "top": [
+          "linuxcnc:gcode:modal-groups",
+          "linuxcnc:sec-repeated-items",
+          "linuxcnc:sec-commands-and-machine-modes"
+        ]
+      },
+      {
+        "id": "q028",
+        "rank": 2,
+        "top": [
+          "linuxcnc:sec:set-feed-rate",
+          "linuxcnc:gcode:g93-g94-g95",
+          "linuxcnc:sec-control-and-data-components"
+        ]
+      },
+      {
+        "id": "q029",
+        "rank": 2,
+        "top": [
+          "linuxcnc:sec:overview-parameters",
+          "linuxcnc:gcode:g96-g97",
+          "linuxcnc:gcode:g33"
+        ]
+      },
+      {
+        "id": "q030",
+        "rank": 1,
+        "top": [
+          "linuxcnc:gcode:comments",
+          "linuxcnc:sec-format-of-a-line",
+          "linuxcnc:sec-common-error-messages"
+        ]
+      },
+      {
+        "id": "q031",
+        "rank": 3,
+        "top": [
+          "linuxcnc:sec-item-order",
+          "linuxcnc:sec-repeated-items",
+          "linuxcnc:gcode:order-of-execution"
+        ]
+      },
+      {
+        "id": "q032",
+        "rank": 1,
+        "top": [
+          "linuxcnc:sec-format-of-a-line",
+          "linuxcnc:ocode:subroutines",
+          "linuxcnc:sec-repeated-items"
+        ]
+      },
+      {
+        "id": "q033",
+        "rank": 1,
+        "top": [
+          "linuxcnc:ocode:subroutines",
+          "linuxcnc:ocode:calling-files",
+          "linuxcnc:sec:overview-parameters"
+        ]
+      },
+      {
+        "id": "q034",
+        "rank": 1,
+        "top": [
+          "linuxcnc:ocode:looping",
+          "linuxcnc:ocode:subroutines",
+          "linuxcnc:ocode:conditional"
+        ]
+      },
+      {
+        "id": "q035",
+        "rank": 1,
+        "top": [
+          "linuxcnc:ocode:conditional",
+          "linuxcnc:ocode:looping",
+          "linuxcnc:ocode:errors"
+        ]
+      },
+      {
+        "id": "q036",
+        "rank": 1,
+        "top": [
+          "linuxcnc:sec:overview-parameters",
+          "linuxcnc:ocode:subroutines",
+          "linuxcnc:gcode:comment-parameters"
+        ]
+      },
+      {
+        "id": "q037",
+        "rank": 3,
+        "top": [
+          "linuxcnc:sec-common-error-messages",
+          "linuxcnc:sec-overview",
+          "linuxcnc:gcode:best-practices"
+        ]
+      },
+      {
+        "id": "q038",
+        "rank": null,
+        "top": [
+          "linuxcnc:sec:overview-parameters",
+          "linuxcnc:sec:tool-table",
+          "linuxcnc:sec:touch-off"
+        ]
+      },
+      {
+        "id": "q039",
+        "rank": 1,
+        "top": [
+          "linuxcnc:sec:set-spindle-speed",
+          "linuxcnc:sec:overview-parameters",
+          "linuxcnc:mcode:m3-m4-m5"
+        ]
+      },
+      {
+        "id": "q040",
+        "rank": 1,
+        "top": [
+          "linuxcnc:sec:select-tool",
+          "linuxcnc:sec:tool-table",
+          "linuxcnc:mcode:m6"
+        ]
+      },
+      {
+        "id": "q041",
+        "rank": 1,
+        "top": [
+          "linuxcnc:mcode:m66",
+          "linuxcnc:sec:overview-parameters",
+          "linuxcnc:mcode:m0-m1"
+        ]
+      },
+      {
+        "id": "q042",
+        "rank": 1,
+        "top": [
+          "linuxcnc:gcode:g38",
+          "linuxcnc:sec:touch-off",
+          "linuxcnc:gcode:workpiece"
+        ]
+      },
+      {
+        "id": "q043",
+        "rank": 1,
+        "top": [
+          "linuxcnc:gcode:g76",
+          "linuxcnc:gcode:g71-g72",
+          "linuxcnc:gcode:g70"
+        ]
+      },
+      {
+        "id": "q044",
+        "rank": 1,
+        "top": [
+          "linuxcnc:gcode:g64",
+          "linuxcnc:gcode:g2-g3",
+          "linuxcnc:gcode:g71-g72"
+        ]
+      },
+      {
+        "id": "q045",
+        "rank": 3,
+        "top": [
+          "linuxcnc:mcode:m52",
+          "linuxcnc:cnc:interpreter-interaction-with-switches",
+          "linuxcnc:mcode:m50"
+        ]
+      },
+      {
+        "id": "q046",
+        "rank": 1,
+        "top": [
+          "linuxcnc:gcode:g61.1",
+          "linuxcnc:gcode:g86",
+          "linuxcnc:mcode:m62-m65"
+        ]
+      },
+      {
+        "id": "q047",
+        "rank": 1,
+        "top": [
+          "linuxcnc:mcode:m2-m30",
+          "linuxcnc:mcode:m6",
+          "linuxcnc:mcode:m3-m4-m5"
+        ]
+      },
+      {
+        "id": "q048",
+        "rank": 1,
+        "top": [
+          "linuxcnc:mcode:m72",
+          "linuxcnc:mcode:m73",
+          "linuxcnc:mcode:m71"
+        ]
+      },
+      {
+        "id": "q049",
+        "rank": 3,
+        "top": [
+          "linuxcnc:gcode:g2-g3",
+          "linuxcnc:sec:overview-parameters",
+          "linuxcnc:gcode:g90.1-g91.1"
+        ]
+      },
+      {
+        "id": "q050",
+        "rank": null,
+        "top": [
+          "linuxcnc:mcode:m0-m1",
+          "linuxcnc:mcode:m60",
+          "linuxcnc:ocode:looping"
+        ]
+      },
+      {
+        "id": "q051",
+        "rank": 3,
+        "top": [
+          "linuxcnc:gcode:g30-g30.1",
+          "linuxcnc:gcode:g33.1",
+          "linuxcnc:gcode:g33"
+        ]
+      },
+      {
+        "id": "q052",
+        "rank": 4,
+        "top": [
+          "linuxcnc:sec:overview-parameters",
+          "linuxcnc:sec:g92-axes-offsets",
+          "linuxcnc:gcode:g92.1-g92.2"
+        ]
+      },
+      {
+        "id": "q053",
+        "rank": 2,
+        "top": [
+          "linuxcnc:mcode:m100-m199",
+          "linuxcnc:mcode:m19",
+          "linuxcnc:mcode:m0-m1"
+        ]
+      },
+      {
+        "id": "q054",
+        "rank": 1,
+        "top": [
+          "linuxcnc:sec:g92-axes-offsets",
+          "linuxcnc:gcode:g92.3",
+          "linuxcnc:gcode:g92.1-g92.2"
+        ]
+      },
+      {
+        "id": "q055",
+        "rank": 5,
+        "top": [
+          "linuxcnc:mcode:m62-m65",
+          "linuxcnc:mcode:m67",
+          "linuxcnc:mcode:m68"
+        ]
+      },
+      {
+        "id": "q056",
+        "rank": 1,
+        "top": [
+          "linuxcnc:gcode:g43.1",
+          "linuxcnc:gcode:g43.2",
+          "linuxcnc:gcode:g43.4"
+        ]
+      }
+    ],
+    "bm25_only": [
+      {
+        "id": "q001",
+        "rank": 1,
+        "top": [
+          "linuxcnc:gcode:g4",
+          "linuxcnc:gcode:g93-g94-g95",
+          "linuxcnc:gcode:g84"
+        ]
+      },
+      {
+        "id": "q002",
+        "rank": 1,
+        "top": [
+          "linuxcnc:gcode:g0",
+          "linuxcnc:gcode:g2-g3",
+          "linuxcnc:gcode:g28-g28.1"
+        ]
+      },
+      {
+        "id": "q003",
+        "rank": 1,
+        "top": [
+          "linuxcnc:gcode:g2-g3",
+          "linuxcnc:gcode:g71-g72",
+          "linuxcnc:gcode:g90.1-g91.1"
+        ]
+      },
+      {
+        "id": "q004",
+        "rank": null,
+        "top": [
+          "linuxcnc:gcode:g33.1",
+          "linuxcnc:gcode:best-practices",
+          "linuxcnc:gcode:g2-g3"
+        ]
+      },
+      {
+        "id": "q005",
+        "rank": 2,
+        "top": [
+          "linuxcnc:gcode:g2-g3",
+          "linuxcnc:mcode:m2-m30",
+          "linuxcnc:gcode:g5"
+        ]
+      },
+      {
+        "id": "q006",
+        "rank": 5,
+        "top": [
+          "linuxcnc:mcode:m26-m27",
+          "linuxcnc:sec:tool-table",
+          "linuxcnc:sec-changes-from-rs274-ngc"
+        ]
+      },
+      {
+        "id": "q007",
+        "rank": 1,
+        "top": [
+          "linuxcnc:mcode:m0-m1",
+          "linuxcnc:sec:tool-table",
+          "linuxcnc:cnc:interpreter-interaction-with-switches"
+        ]
+      },
+      {
+        "id": "q008",
+        "rank": 6,
+        "top": [
+          "linuxcnc:gcode:g93-g94-g95",
+          "linuxcnc:gcode:g84",
+          "linuxcnc:gcode:g74"
+        ]
+      },
+      {
+        "id": "q009",
+        "rank": 1,
+        "top": [
+          "linuxcnc:mcode:m7-m8-m9",
+          "linuxcnc:sec-mechanical-components",
+          "linuxcnc:mcode:m2-m30"
+        ]
+      },
+      {
+        "id": "q010",
+        "rank": 3,
+        "top": [
+          "linuxcnc:gcode:g90.1-g91.1",
+          "linuxcnc:gcode:g80-g89",
+          "linuxcnc:gcode:g90-g91"
+        ]
+      },
+      {
+        "id": "q011",
+        "rank": null,
+        "top": [
+          "linuxcnc:sec-additions-to-rs274-ngc",
+          "linuxcnc:mcode:m68",
+          "linuxcnc:mcode:m66"
+        ]
+      },
+      {
+        "id": "q012",
+        "rank": 2,
+        "top": [
+          "linuxcnc:gcode:best-practices",
+          "linuxcnc:gcode:g17-g19.1",
+          "linuxcnc:gcode:g90.1-g91.1"
+        ]
+      },
+      {
+        "id": "q013",
+        "rank": 2,
+        "top": [
+          "linuxcnc:gcode:g10-l10",
+          "linuxcnc:sec-tool-length-compensation",
+          "linuxcnc:gcode:quick-reference-table"
+        ]
+      },
+      {
+        "id": "q014",
+        "rank": 1,
+        "top": [
+          "linuxcnc:gcode:g49",
+          "linuxcnc:gcode:quick-reference-table",
+          "linuxcnc:gcode:best-practices"
+        ]
+      },
+      {
+        "id": "q015",
+        "rank": 1,
+        "top": [
+          "linuxcnc:gcode:g40",
+          "linuxcnc:gcode:g41-g42",
+          "linuxcnc:sec:cutter-radius-compensation"
+        ]
+      },
+      {
+        "id": "q016",
+        "rank": 1,
+        "top": [
+          "linuxcnc:gcode:g41-g42",
+          "linuxcnc:sec:cutter-radius-compensation",
+          "linuxcnc:gcode:g41.1-g42.1"
+        ]
+      },
+      {
+        "id": "q017",
+        "rank": 7,
+        "top": [
+          "linuxcnc:sec:machine-coordinate-system",
+          "linuxcnc:sec:g92-axes-offsets",
+          "linuxcnc:sec-coordinate-systems"
+        ]
+      },
+      {
+        "id": "q018",
+        "rank": 2,
+        "top": [
+          "linuxcnc:gcode:g68.2",
+          "linuxcnc:gcode:g54-g59.3",
+          "linuxcnc:gcode:g52"
+        ]
+      },
+      {
+        "id": "q019",
+        "rank": 5,
+        "top": [
+          "linuxcnc:gcode:g68.2",
+          "linuxcnc:gcode:g52",
+          "linuxcnc:sec:machine-coordinate-system"
+        ]
+      },
+      {
+        "id": "q020",
+        "rank": 2,
+        "top": [
+          "linuxcnc:gcode:g80",
+          "linuxcnc:gcode:g83",
+          "linuxcnc:gcode:g98-g99"
+        ]
+      },
+      {
+        "id": "q021",
+        "rank": 1,
+        "top": [
+          "linuxcnc:gcode:g80",
+          "linuxcnc:gcode:best-practices",
+          "linuxcnc:gcode:g80-g89"
+        ]
+      },
+      {
+        "id": "q022",
+        "rank": 5,
+        "top": [
+          "linuxcnc:gcode:g83",
+          "linuxcnc:gcode:g82",
+          "linuxcnc:gcode:g73"
+        ]
+      },
+      {
+        "id": "q023",
+        "rank": 1,
+        "top": [
+          "linuxcnc:gcode:g98-g99",
+          "linuxcnc:gcode:g80-g89",
+          "linuxcnc:mcode:m2-m30"
+        ]
+      },
+      {
+        "id": "q024",
+        "rank": 1,
+        "top": [
+          "linuxcnc:gcode:g82",
+          "linuxcnc:gcode:g84",
+          "linuxcnc:gcode:g74"
+        ]
+      },
+      {
+        "id": "q025",
+        "rank": 1,
+        "top": [
+          "linuxcnc:gcode:g33.1",
+          "linuxcnc:sec:set-spindle-speed",
+          "linuxcnc:gcode:g74"
+        ]
+      },
+      {
+        "id": "q026",
+        "rank": 7,
+        "top": [
+          "linuxcnc:gcode:g82",
+          "linuxcnc:gcode:g80",
+          "linuxcnc:gcode:g80-g89"
+        ]
+      },
+      {
+        "id": "q027",
+        "rank": 1,
+        "top": [
+          "linuxcnc:gcode:modal-groups",
+          "linuxcnc:sec-repeated-items",
+          "linuxcnc:gcode:g28.2"
+        ]
+      },
+      {
+        "id": "q028",
+        "rank": 1,
+        "top": [
+          "linuxcnc:gcode:g93-g94-g95",
+          "linuxcnc:sec-control-and-data-components",
+          "linuxcnc:sec:set-feed-rate"
+        ]
+      },
+      {
+        "id": "q029",
+        "rank": 1,
+        "top": [
+          "linuxcnc:gcode:g96-g97",
+          "linuxcnc:gcode:g33.1",
+          "linuxcnc:gcode:g76"
+        ]
+      },
+      {
+        "id": "q030",
+        "rank": 2,
+        "top": [
+          "linuxcnc:sec-common-error-messages",
+          "linuxcnc:gcode:comments",
+          "linuxcnc:sec-overview"
+        ]
+      },
+      {
+        "id": "q031",
+        "rank": 9,
+        "top": [
+          "linuxcnc:sec-item-order",
+          "linuxcnc:ocode:conditional",
+          "linuxcnc:gcode:best-practices"
+        ]
+      },
+      {
+        "id": "q032",
+        "rank": 2,
+        "top": [
+          "linuxcnc:cnc:interpreter-interaction-with-switches",
+          "linuxcnc:sec-format-of-a-line",
+          "linuxcnc:sec-mechanical-components"
+        ]
+      },
+      {
+        "id": "q033",
+        "rank": 1,
+        "top": [
+          "linuxcnc:ocode:subroutines",
+          "linuxcnc:ocode:calling-files",
+          "linuxcnc:mcode:m70"
+        ]
+      },
+      {
+        "id": "q034",
+        "rank": 1,
+        "top": [
+          "linuxcnc:ocode:looping",
+          "linuxcnc:ocode:errors",
+          "linuxcnc:ocode:subroutines"
+        ]
+      },
+      {
+        "id": "q035",
+        "rank": 1,
+        "top": [
+          "linuxcnc:ocode:conditional",
+          "linuxcnc:ocode:looping",
+          "linuxcnc:gcode:file-requirements"
+        ]
+      },
+      {
+        "id": "q036",
+        "rank": 2,
+        "top": [
+          "linuxcnc:mcode:m2-m30",
+          "linuxcnc:sec:overview-parameters",
+          "linuxcnc:ocode:subroutines"
+        ]
+      },
+      {
+        "id": "q037",
+        "rank": 2,
+        "top": [
+          "linuxcnc:sec-format-of-a-line",
+          "linuxcnc:gcode:best-practices",
+          "linuxcnc:gcode:g80-g89"
+        ]
+      },
+      {
+        "id": "q038",
+        "rank": 1,
+        "top": [
+          "linuxcnc:gcode:g30-g30.1",
+          "linuxcnc:gcode:g76",
+          "linuxcnc:sec-changes-from-rs274-ngc"
+        ]
+      },
+      {
+        "id": "q039",
+        "rank": 3,
+        "top": [
+          "linuxcnc:gcode:g33.1",
+          "linuxcnc:gcode:g76",
+          "linuxcnc:sec:set-spindle-speed"
+        ]
+      },
+      {
+        "id": "q040",
+        "rank": 1,
+        "top": [
+          "linuxcnc:sec:select-tool",
+          "linuxcnc:gcode:g43",
+          "linuxcnc:sec-additions-to-rs274-ngc"
+        ]
+      },
+      {
+        "id": "q041",
+        "rank": 1,
+        "top": [
+          "linuxcnc:mcode:m66",
+          "linuxcnc:gcode:g4",
+          "linuxcnc:mcode:m62-m65"
+        ]
+      },
+      {
+        "id": "q042",
+        "rank": 1,
+        "top": [
+          "linuxcnc:gcode:g38",
+          "linuxcnc:gcode:probe-logging",
+          "linuxcnc:sec-additions-to-rs274-ngc"
+        ]
+      },
+      {
+        "id": "q043",
+        "rank": 1,
+        "top": [
+          "linuxcnc:gcode:g76",
+          "linuxcnc:gcode:g33",
+          "linuxcnc:gcode:g71-g72"
+        ]
+      },
+      {
+        "id": "q044",
+        "rank": 2,
+        "top": [
+          "linuxcnc:sec-control-and-data-components",
+          "linuxcnc:gcode:g64",
+          "linuxcnc:gcode:best-practices"
+        ]
+      },
+      {
+        "id": "q045",
+        "rank": null,
+        "top": [
+          "linuxcnc:gcode:g76",
+          "linuxcnc:gcode:g33",
+          "linuxcnc:gcode:g33.1"
+        ]
+      },
+      {
+        "id": "q046",
+        "rank": 6,
+        "top": [
+          "linuxcnc:sec:cutter-radius-compensation",
+          "linuxcnc:gcode:g2-g3",
+          "linuxcnc:sec-control-and-data-components"
+        ]
+      },
+      {
+        "id": "q047",
+        "rank": 1,
+        "top": [
+          "linuxcnc:mcode:m2-m30",
+          "linuxcnc:gcode:g28.2",
+          "linuxcnc:gcode:file-requirements"
+        ]
+      },
+      {
+        "id": "q048",
+        "rank": 1,
+        "top": [
+          "linuxcnc:mcode:m73",
+          "linuxcnc:mcode:m72",
+          "linuxcnc:mcode:m98-m99"
+        ]
+      },
+      {
+        "id": "q049",
+        "rank": 1,
+        "top": [
+          "linuxcnc:gcode:g90.1-g91.1",
+          "linuxcnc:gcode:g2-g3",
+          "linuxcnc:gcode:g5"
+        ]
+      },
+      {
+        "id": "q050",
+        "rank": 1,
+        "top": [
+          "linuxcnc:gcode:g4",
+          "linuxcnc:mcode:m60",
+          "linuxcnc:sec-mechanical-components"
+        ]
+      },
+      {
+        "id": "q051",
+        "rank": 4,
+        "top": [
+          "linuxcnc:gcode:g93-g94-g95",
+          "linuxcnc:mcode:m2-m30",
+          "linuxcnc:gcode:g68.2"
+        ]
+      },
+      {
+        "id": "q052",
+        "rank": 1,
+        "top": [
+          "linuxcnc:gcode:g5.2-g5.3",
+          "linuxcnc:gcode:g93-g94-g95",
+          "linuxcnc:sec:tool-table"
+        ]
+      },
+      {
+        "id": "q053",
+        "rank": 1,
+        "top": [
+          "linuxcnc:mcode:m19",
+          "linuxcnc:mcode:m2-m30",
+          "linuxcnc:gcode:g68.2"
+        ]
+      },
+      {
+        "id": "q054",
+        "rank": 1,
+        "top": [
+          "linuxcnc:sec:g92-axes-offsets",
+          "linuxcnc:gcode:g68.2",
+          "linuxcnc:gcode:g92"
+        ]
+      },
+      {
+        "id": "q055",
+        "rank": 1,
+        "top": [
+          "linuxcnc:mcode:m61",
+          "linuxcnc:mcode:m2-m30",
+          "linuxcnc:gcode:g68.2"
+        ]
+      },
+      {
+        "id": "q056",
+        "rank": 1,
+        "top": [
+          "linuxcnc:gcode:g43.1",
+          "linuxcnc:mcode:m2-m30",
+          "linuxcnc:sec-additions-to-rs274-ngc"
+        ]
+      }
+    ],
+    "hybrid_rrf": [
+      {
+        "id": "q001",
+        "rank": 1,
+        "top": [
+          "linuxcnc:gcode:g4",
+          "linuxcnc:gcode:g93-g94-g95",
+          "linuxcnc:gcode:g84"
+        ]
+      },
+      {
+        "id": "q002",
+        "rank": 1,
+        "top": [
+          "linuxcnc:gcode:g0",
+          "linuxcnc:sec:cutter-radius-compensation",
+          "linuxcnc:gcode:g2-g3"
+        ]
+      },
+      {
+        "id": "q003",
+        "rank": 1,
+        "top": [
+          "linuxcnc:gcode:g2-g3",
+          "linuxcnc:gcode:g90.1-g91.1",
+          "linuxcnc:gcode:best-practices"
+        ]
+      },
+      {
+        "id": "q004",
+        "rank": 1,
+        "top": [
+          "linuxcnc:mcode:m3-m4-m5",
+          "linuxcnc:gcode:g33.1",
+          "linuxcnc:mcode:m19"
+        ]
+      },
+      {
+        "id": "q005",
+        "rank": 2,
+        "top": [
+          "linuxcnc:ocode:looping",
+          "linuxcnc:mcode:m2-m30",
+          "linuxcnc:gcode:g68.2"
+        ]
+      },
+      {
+        "id": "q006",
+        "rank": 2,
+        "top": [
+          "linuxcnc:sec:tool-table",
+          "linuxcnc:mcode:m6",
+          "linuxcnc:sec:select-tool"
+        ]
+      },
+      {
+        "id": "q007",
+        "rank": 1,
+        "top": [
+          "linuxcnc:mcode:m0-m1",
+          "linuxcnc:mcode:m100-m199",
+          "linuxcnc:sec-m-code-quick-reference-table"
+        ]
+      },
+      {
+        "id": "q008",
+        "rank": 5,
+        "top": [
+          "linuxcnc:gcode:g93-g94-g95",
+          "linuxcnc:sec-linear-and-rotary-axis",
+          "linuxcnc:sec-control-and-data-components"
+        ]
+      },
+      {
+        "id": "q009",
+        "rank": 1,
+        "top": [
+          "linuxcnc:mcode:m7-m8-m9",
+          "linuxcnc:gcode:g40",
+          "linuxcnc:sec:overview-parameters"
+        ]
+      },
+      {
+        "id": "q010",
+        "rank": 2,
+        "top": [
+          "linuxcnc:gcode:g90.1-g91.1",
+          "linuxcnc:gcode:g90-g91",
+          "linuxcnc:gcode:g2-g3"
+        ]
+      },
+      {
+        "id": "q011",
+        "rank": 2,
+        "top": [
+          "linuxcnc:gcode:best-practices",
+          "linuxcnc:gcode:g20-g21",
+          "linuxcnc:mcode:m66"
+        ]
+      },
+      {
+        "id": "q012",
+        "rank": 1,
+        "top": [
+          "linuxcnc:gcode:g17-g19.1",
+          "linuxcnc:sec-control-and-data-components",
+          "linuxcnc:gcode:g90.1-g91.1"
+        ]
+      },
+      {
+        "id": "q013",
+        "rank": 1,
+        "top": [
+          "linuxcnc:sec-tool-length-compensation",
+          "linuxcnc:gcode:g10-l10",
+          "linuxcnc:sec:touch-off"
+        ]
+      },
+      {
+        "id": "q014",
+        "rank": 1,
+        "top": [
+          "linuxcnc:gcode:g49",
+          "linuxcnc:sec-tool-length-compensation",
+          "linuxcnc:gcode:g10-l10"
+        ]
+      },
+      {
+        "id": "q015",
+        "rank": 1,
+        "top": [
+          "linuxcnc:gcode:g40",
+          "linuxcnc:sec:cutter-radius-compensation",
+          "linuxcnc:gcode:g41-g42"
+        ]
+      },
+      {
+        "id": "q016",
+        "rank": 1,
+        "top": [
+          "linuxcnc:gcode:g41-g42",
+          "linuxcnc:gcode:g41.1-g42.1",
+          "linuxcnc:sec:cutter-radius-compensation"
+        ]
+      },
+      {
+        "id": "q017",
+        "rank": 7,
+        "top": [
+          "linuxcnc:sec:g92-axes-offsets",
+          "linuxcnc:sec:machine-coordinate-system",
+          "linuxcnc:sec-coordinate-systems"
+        ]
+      },
+      {
+        "id": "q018",
+        "rank": 3,
+        "top": [
+          "linuxcnc:gcode:g10-l2",
+          "linuxcnc:sec-coordinate-systems",
+          "linuxcnc:gcode:g54-g59.3"
+        ]
+      },
+      {
+        "id": "q019",
+        "rank": 1,
+        "top": [
+          "linuxcnc:gcode:g10-l2",
+          "linuxcnc:sec:machine-coordinate-system",
+          "linuxcnc:gcode:g68.2"
+        ]
+      },
+      {
+        "id": "q020",
+        "rank": 1,
+        "top": [
+          "linuxcnc:gcode:g83",
+          "linuxcnc:gcode:g80",
+          "linuxcnc:gcode:g80-g89"
+        ]
+      },
+      {
+        "id": "q021",
+        "rank": 1,
+        "top": [
+          "linuxcnc:gcode:g80",
+          "linuxcnc:gcode:g80-g89",
+          "linuxcnc:gcode:g98-g99"
+        ]
+      },
+      {
+        "id": "q022",
+        "rank": 2,
+        "top": [
+          "linuxcnc:gcode:g83",
+          "linuxcnc:gcode:g81",
+          "linuxcnc:gcode:g73"
+        ]
+      },
+      {
+        "id": "q023",
+        "rank": 1,
+        "top": [
+          "linuxcnc:gcode:g98-g99",
+          "linuxcnc:gcode:g80-g89",
+          "linuxcnc:gcode:g80"
+        ]
+      },
+      {
+        "id": "q024",
+        "rank": 1,
+        "top": [
+          "linuxcnc:gcode:g82",
+          "linuxcnc:gcode:g83",
+          "linuxcnc:gcode:g74"
+        ]
+      },
+      {
+        "id": "q025",
+        "rank": 1,
+        "top": [
+          "linuxcnc:gcode:g33.1",
+          "linuxcnc:gcode:g74",
+          "linuxcnc:gcode:g84"
+        ]
+      },
+      {
+        "id": "q026",
+        "rank": 5,
+        "top": [
+          "linuxcnc:gcode:g82",
+          "linuxcnc:gcode:g80-g89",
+          "linuxcnc:gcode:g80"
+        ]
+      },
+      {
+        "id": "q027",
+        "rank": 1,
+        "top": [
+          "linuxcnc:gcode:modal-groups",
+          "linuxcnc:sec-repeated-items",
+          "linuxcnc:gcode:g28.2"
+        ]
+      },
+      {
+        "id": "q028",
+        "rank": 1,
+        "top": [
+          "linuxcnc:gcode:g93-g94-g95",
+          "linuxcnc:sec:set-feed-rate",
+          "linuxcnc:sec-control-and-data-components"
+        ]
+      },
+      {
+        "id": "q029",
+        "rank": 1,
+        "top": [
+          "linuxcnc:gcode:g96-g97",
+          "linuxcnc:sec:overview-parameters",
+          "linuxcnc:gcode:g33"
+        ]
+      },
+      {
+        "id": "q030",
+        "rank": 1,
+        "top": [
+          "linuxcnc:gcode:comments",
+          "linuxcnc:sec-common-error-messages",
+          "linuxcnc:sec-format-of-a-line"
+        ]
+      },
+      {
+        "id": "q031",
+        "rank": 3,
+        "top": [
+          "linuxcnc:sec-item-order",
+          "linuxcnc:sec:tool-table",
+          "linuxcnc:gcode:order-of-execution"
+        ]
+      },
+      {
+        "id": "q032",
+        "rank": 1,
+        "top": [
+          "linuxcnc:sec-format-of-a-line",
+          "linuxcnc:cnc:interpreter-interaction-with-switches",
+          "linuxcnc:ocode:subroutines"
+        ]
+      },
+      {
+        "id": "q033",
+        "rank": 1,
+        "top": [
+          "linuxcnc:ocode:subroutines",
+          "linuxcnc:ocode:calling-files",
+          "linuxcnc:ocode:numbering"
+        ]
+      },
+      {
+        "id": "q034",
+        "rank": 1,
+        "top": [
+          "linuxcnc:ocode:looping",
+          "linuxcnc:ocode:subroutines",
+          "linuxcnc:ocode:errors"
+        ]
+      },
+      {
+        "id": "q035",
+        "rank": 1,
+        "top": [
+          "linuxcnc:ocode:conditional",
+          "linuxcnc:ocode:looping",
+          "linuxcnc:ocode:errors"
+        ]
+      },
+      {
+        "id": "q036",
+        "rank": 2,
+        "top": [
+          "linuxcnc:ocode:subroutines",
+          "linuxcnc:sec:overview-parameters",
+          "linuxcnc:gcode:comment-parameters"
+        ]
+      },
+      {
+        "id": "q037",
+        "rank": 1,
+        "top": [
+          "linuxcnc:gcode:best-practices",
+          "linuxcnc:gcode:file-requirements",
+          "linuxcnc:sec-overview"
+        ]
+      },
+      {
+        "id": "q038",
+        "rank": 1,
+        "top": [
+          "linuxcnc:gcode:g30-g30.1",
+          "linuxcnc:sec:select-tool",
+          "linuxcnc:sec:overview-parameters"
+        ]
+      },
+      {
+        "id": "q039",
+        "rank": 1,
+        "top": [
+          "linuxcnc:sec:set-spindle-speed",
+          "linuxcnc:mcode:m3-m4-m5",
+          "linuxcnc:gcode:g33.1"
+        ]
+      },
+      {
+        "id": "q040",
+        "rank": 1,
+        "top": [
+          "linuxcnc:sec:select-tool",
+          "linuxcnc:mcode:m6",
+          "linuxcnc:sec:tool-table"
+        ]
+      },
+      {
+        "id": "q041",
+        "rank": 1,
+        "top": [
+          "linuxcnc:mcode:m66",
+          "linuxcnc:mcode:m62-m65",
+          "linuxcnc:sec:overview-parameters"
+        ]
+      },
+      {
+        "id": "q042",
+        "rank": 1,
+        "top": [
+          "linuxcnc:gcode:g38",
+          "linuxcnc:gcode:probe-logging",
+          "linuxcnc:gcode:workpiece"
+        ]
+      },
+      {
+        "id": "q043",
+        "rank": 1,
+        "top": [
+          "linuxcnc:gcode:g76",
+          "linuxcnc:gcode:g71-g72",
+          "linuxcnc:gcode:g70"
+        ]
+      },
+      {
+        "id": "q044",
+        "rank": 1,
+        "top": [
+          "linuxcnc:gcode:g64",
+          "linuxcnc:sec-control-and-data-components",
+          "linuxcnc:gcode:best-practices"
+        ]
+      },
+      {
+        "id": "q045",
+        "rank": 8,
+        "top": [
+          "linuxcnc:gcode:g33.1",
+          "linuxcnc:cnc:interpreter-interaction-with-switches",
+          "linuxcnc:gcode:g33"
+        ]
+      },
+      {
+        "id": "q046",
+        "rank": 1,
+        "top": [
+          "linuxcnc:gcode:g61.1",
+          "linuxcnc:gcode:g38",
+          "linuxcnc:sec:select-tool"
+        ]
+      },
+      {
+        "id": "q047",
+        "rank": 1,
+        "top": [
+          "linuxcnc:mcode:m2-m30",
+          "linuxcnc:mcode:m6",
+          "linuxcnc:sec:set-spindle-speed"
+        ]
+      },
+      {
+        "id": "q048",
+        "rank": 1,
+        "top": [
+          "linuxcnc:mcode:m72",
+          "linuxcnc:mcode:m73",
+          "linuxcnc:mcode:m71"
+        ]
+      },
+      {
+        "id": "q049",
+        "rank": 2,
+        "top": [
+          "linuxcnc:gcode:g2-g3",
+          "linuxcnc:gcode:g90.1-g91.1",
+          "linuxcnc:gcode:g5"
+        ]
+      },
+      {
+        "id": "q050",
+        "rank": null,
+        "top": [
+          "linuxcnc:mcode:m60",
+          "linuxcnc:mcode:m0-m1",
+          "linuxcnc:ocode:looping"
+        ]
+      },
+      {
+        "id": "q051",
+        "rank": 1,
+        "top": [
+          "linuxcnc:gcode:g33",
+          "linuxcnc:gcode:g33.1",
+          "linuxcnc:gcode:g93-g94-g95"
+        ]
+      },
+      {
+        "id": "q052",
+        "rank": 1,
+        "top": [
+          "linuxcnc:gcode:g5.2-g5.3",
+          "linuxcnc:gcode:g28.2",
+          "linuxcnc:sec:g92-axes-offsets"
+        ]
+      },
+      {
+        "id": "q053",
+        "rank": 1,
+        "top": [
+          "linuxcnc:mcode:m19",
+          "linuxcnc:mcode:m2-m30",
+          "linuxcnc:gcode:g93-g94-g95"
+        ]
+      },
+      {
+        "id": "q054",
+        "rank": 1,
+        "top": [
+          "linuxcnc:sec:g92-axes-offsets",
+          "linuxcnc:sec:g52-and-g92-offsets",
+          "linuxcnc:gcode:g92"
+        ]
+      },
+      {
+        "id": "q055",
+        "rank": 1,
+        "top": [
+          "linuxcnc:mcode:m61",
+          "linuxcnc:mcode:m2-m30",
+          "linuxcnc:sec-m-code-quick-reference-table"
+        ]
+      },
+      {
+        "id": "q056",
+        "rank": 1,
+        "top": [
+          "linuxcnc:gcode:g43.1",
+          "linuxcnc:gcode:g43.4",
+          "linuxcnc:sec-sample-programs-using-offsets"
+        ]
+      }
+    ]
+  }
+}
