@@ -27,7 +27,7 @@ The Stop hook reads this file: unchecked boxes mean "not finished".
 
 ## Phase 2: Retrieval
 
-- [ ] 2.1 `gcoderag/embed.py`: `Embedder` protocol, `SentenceTransformerEmbedder`, `FastEmbedEmbedder`,
+- [x] 2.1 `gcoderag/embed.py`: `Embedder` protocol, `SentenceTransformerEmbedder`, `FastEmbedEmbedder`,
       `FakeEmbedder` (SPEC 4.1). Unit tests use `FakeEmbedder` only.
 - [ ] 2.2 `gcoderag/index.py`: `DenseIndex`, `BM25Index`, `HybridRetriever` with RRF and code normalization
       (SPEC 4.2-4.4); `scripts/build_index.py` writes `data/index/embeddings.npy` + `meta.json`.
