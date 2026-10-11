@@ -5,7 +5,7 @@ The Stop hook reads this file: unchecked boxes mean "not finished".
 
 ## Phase 0: Environment
 
-- [ ] 0.1 `git init -b main` (or `git init` + `git checkout -b main`); commit the scaffold as `0.1: scaffold`.
+- [x] 0.1 `git init -b main` (or `git init` + `git checkout -b main`); commit the scaffold as `0.1: scaffold`.
       Check: `git log --oneline | wc -l` >= 1 and `git branch --show-current` prints `main`.
 - [ ] 0.2 Create `.venv`, install `requirements.txt`, confirm `import sentence_transformers` works (or apply the
       fastembed fallback from CLAUDE.md section 5). Record Python version and embedding backend in `docs/DECISIONS.md`.
