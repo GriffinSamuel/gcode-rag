@@ -1,0 +1,78 @@
+{
+  "hooks": {
+    "Stop": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "powershell.exe",
+            "args": ["-NoProfile", "-ExecutionPolicy", "Bypass", "-File", "${CLAUDE_PROJECT_DIR}/.claude/hooks/stop_gate.ps1"],
+            "timeout": 900,
+            "statusMessage": "Stop gate: running scripts/verify_done.py (tests included)..."
+          }
+        ]
+      }
+    ],
+    "SessionStart": [
+      {
+        "matcher": "compact|resume",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "powershell.exe",
+            "args": ["-NoProfile", "-ExecutionPolicy", "Bypass", "-File", "${CLAUDE_PROJECT_DIR}/.claude/hooks/session_start.ps1"],
+            "timeout": 30
+          }
+        ]
+      }
+    ]
+  },
+  "permissions": {
+    "allow": [
+      "Bash(git status*)",
+      "Bash(git add*)",
+      "Bash(git commit*)",
+      "Bash(git log*)",
+      "Bash(git diff*)",
+      "Bash(git init*)",
+      "Bash(git branch*)",
+      "Bash(git checkout -b *)",
+      "Bash(git rev-parse*)",
+      "Bash(git rev-list*)",
+      "Bash(git ls-files*)",
+      "Bash(python -m venv .venv)",
+      "Bash(py -3 -m venv .venv)",
+      "Bash(.venv/Scripts/python.exe *)",
+      "Bash(.venv/Scripts/pip.exe *)",
+      "Bash(.venv/Scripts/pytest.exe *)",
+      "Bash(mkdir *)",
+      "Bash(ls *)",
+      "Bash(cat *)",
+      "Bash(wc *)",
+      "Bash(head *)",
+      "Bash(tail *)",
+      "Bash(grep *)",
+      "Bash(find *)",
+      "WebFetch(domain:raw.githubusercontent.com)",
+      "WebFetch(domain:github.com)",
+      "WebFetch(domain:www.haascnc.com)",
+      "WebFetch(domain:huggingface.co)",
+      "WebFetch(domain:pypi.org)",
+      "WebFetch(domain:docs.python.org)",
+      "WebFetch(domain:www.gradio.app)",
+      "WebFetch(domain:docs.anthropic.com)",
+      "WebFetch(domain:docs.claude.com)"
+    ],
+    "deny": [
+      "Read(./.env)",
+      "Edit(./.env)",
+      "Write(./.env)",
+      "Bash(git push*)",
+      "Bash(git remote add*)",
+      "Bash(git reset --hard*)",
+      "Bash(git clean*)",
+      "Bash(git checkout -- .)",
+      "Bash(git stash drop*)"
+    ]
+  }
+}

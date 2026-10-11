@@ -1,0 +1,28 @@
+# Secrets
+.env
+
+# Python
+.venv/
+__pycache__/
+*.pyc
+.pytest_cache/
+*.egg-info/
+build/
+dist/
+
+# Data (rebuilt by scripts/build_corpus.py and scripts/build_index.py; Haas content must never be committed)
+data/
+
+# Claude Code loop state
+.claude/hooks/state/
+.claude/settings.local.json
+
+# OS / editors
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
+
+# Gradio
+flagged/
+.gradio/

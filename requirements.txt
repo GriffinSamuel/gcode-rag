@@ -1,0 +1,20 @@
+# Core
+requests>=2.31
+beautifulsoup4>=4.12
+python-dotenv>=1.0
+numpy>=1.26
+rank-bm25>=0.2.2
+
+# Embeddings (primary backend; pulls torch CPU wheels on Windows). Fallback if this fails: pip install fastembed
+sentence-transformers>=3.0
+
+# LLM clients (only used when a key is configured)
+anthropic>=0.40
+openai>=1.50
+
+# App + deploy
+gradio>=4.44
+huggingface_hub>=0.25
+
+# Tests
+pytest>=8.0
