@@ -7,7 +7,7 @@ The Stop hook reads this file: unchecked boxes mean "not finished".
 
 - [x] 0.1 `git init -b main` (or `git init` + `git checkout -b main`); commit the scaffold as `0.1: scaffold`.
       Check: `git log --oneline | wc -l` >= 1 and `git branch --show-current` prints `main`.
-- [ ] 0.2 Create `.venv`, install `requirements.txt`, confirm `import sentence_transformers` works (or apply the
+- [x] 0.2 Create `.venv`, install `requirements.txt`, confirm `import sentence_transformers` works (or apply the
       fastembed fallback from CLAUDE.md section 5). Record Python version and embedding backend in `docs/DECISIONS.md`.
       Check: `.venv/Scripts/python.exe -c "import numpy, rank_bm25, gradio, pytest, requests, bs4"` exits 0.
 - [ ] 0.3 Run `scripts/check_env.py`; record the mode (`llm` with provider name, or `retrieval-only`) in `docs/DECISIONS.md`.
