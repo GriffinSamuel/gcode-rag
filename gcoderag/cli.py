@@ -96,7 +96,10 @@ def build_parser() -> argparse.ArgumentParser:
 
 def main(argv: list[str] | None = None) -> int:
     """Entry point."""
+    from gcoderag.config import load_settings
+
     logging.basicConfig(level=logging.WARNING, format="%(levelname)s %(name)s: %(message)s")
+    load_settings()
     args = build_parser().parse_args(argv)
     return int(args.func(args))
 
