@@ -53,7 +53,7 @@ The Stop hook reads this file: unchecked boxes mean "not finished".
       tests, including one per rule.
 - [x] 4.4 `gcoderag/generator.py`: generate -> validate -> retry (max 3 attempts) (SPEC 6.3). Test: `FakeLLM`
       returns an invalid program first, then a valid one; result reports `attempts == 2`.
-- [ ] 4.5 `examples/`: >= 3 `valid_*.nc` and >= 3 `invalid_*.nc`; `scripts/validate_examples.py` writes
+- [x] 4.5 `examples/`: >= 3 `valid_*.nc` and >= 3 `invalid_*.nc`; `scripts/validate_examples.py` writes
       `results/validator_report.json` where every example matches its expected outcome.
 - [ ] 4.6 Answer evaluation (SPEC 5.4): if check_env reports `llm`, run it over all questions and fill
       `results.json.answer_eval` (`status: "done"`, keyword accuracy >= 0.60); otherwise set

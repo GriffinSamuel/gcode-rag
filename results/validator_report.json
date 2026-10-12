@@ -1,0 +1,85 @@
+{
+  "generated_at": "2026-10-12T21:52:58Z",
+  "results": [
+    {
+      "file": "examples/invalid_arc_out_of_envelope.nc",
+      "dialect": "linuxcnc",
+      "expected": "invalid",
+      "ok": false,
+      "errors": 2,
+      "warnings": 0,
+      "rules": [
+        "E006",
+        "E009"
+      ],
+      "matches_expectation": true
+    },
+    {
+      "file": "examples/invalid_missing_feed.nc",
+      "dialect": "linuxcnc",
+      "expected": "invalid",
+      "ok": false,
+      "errors": 1,
+      "warnings": 0,
+      "rules": [
+        "E005"
+      ],
+      "matches_expectation": true
+    },
+    {
+      "file": "examples/invalid_modal_conflict.nc",
+      "dialect": "linuxcnc",
+      "expected": "invalid",
+      "ok": false,
+      "errors": 2,
+      "warnings": 0,
+      "rules": [
+        "E004"
+      ],
+      "matches_expectation": true
+    },
+    {
+      "file": "examples/invalid_unknown_code.nc",
+      "dialect": "linuxcnc",
+      "expected": "invalid",
+      "ok": false,
+      "errors": 1,
+      "warnings": 1,
+      "rules": [
+        "E003",
+        "W102"
+      ],
+      "matches_expectation": true
+    },
+    {
+      "file": "examples/valid_drill_pattern.nc",
+      "dialect": "linuxcnc",
+      "expected": "valid",
+      "ok": true,
+      "errors": 0,
+      "warnings": 0,
+      "rules": [],
+      "matches_expectation": true
+    },
+    {
+      "file": "examples/valid_haas_face.nc",
+      "dialect": "haas",
+      "expected": "valid",
+      "ok": true,
+      "errors": 0,
+      "warnings": 0,
+      "rules": [],
+      "matches_expectation": true
+    },
+    {
+      "file": "examples/valid_square_pocket.nc",
+      "dialect": "linuxcnc",
+      "expected": "valid",
+      "ok": true,
+      "errors": 0,
+      "warnings": 0,
+      "rules": [],
+      "matches_expectation": true
+    }
+  ]
+}
