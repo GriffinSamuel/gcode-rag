@@ -51,7 +51,7 @@ The Stop hook reads this file: unchecked boxes mean "not finished".
 - [x] 4.2 `gcoderag/rag.py`: grounded answers with `[n]` citations and the `NOT_IN_DOCS` refusal path (SPEC 6.2). Tests with `FakeLLM`.
 - [x] 4.3 `gcoderag/validator.py`: parser + all rules E001-E010 and W101-W105 + CLI (SPEC 7). At least 15 unit
       tests, including one per rule.
-- [ ] 4.4 `gcoderag/generator.py`: generate -> validate -> retry (max 3 attempts) (SPEC 6.3). Test: `FakeLLM`
+- [x] 4.4 `gcoderag/generator.py`: generate -> validate -> retry (max 3 attempts) (SPEC 6.3). Test: `FakeLLM`
       returns an invalid program first, then a valid one; result reports `attempts == 2`.
 - [ ] 4.5 `examples/`: >= 3 `valid_*.nc` and >= 3 `invalid_*.nc`; `scripts/validate_examples.py` writes
       `results/validator_report.json` where every example matches its expected outcome.

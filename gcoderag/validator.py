@@ -232,8 +232,8 @@ class GcodeValidator:
         self.dialect = dialect
         self.envelope = dict(envelope or DEFAULT_ENVELOPE)
         self.extra_codes = set(extra_codes or ())
-        self._corpus_docs = corpus_docs
-        self._use_corpus = use_corpus
+        self.corpus_docs = corpus_docs
+        self.use_corpus = use_corpus
         self._known: frozenset[str] | None = None
 
     @property
@@ -243,14 +243,14 @@ class GcodeValidator:
             known = set(KNOWN_G_LINUXCNC | KNOWN_M_LINUXCNC) | self.extra_codes
             if self.dialect == "haas":
                 known |= KNOWN_G_HAAS_EXTRA | KNOWN_M_HAAS_EXTRA
-            if self._use_corpus:
+            if self.use_corpus:
                 known |= load_corpus_codes(self._docs_path(), self.dialect)
             self._known = frozenset(known)
         return self._known
 
     def _docs_path(self) -> Path:
-        if self._corpus_docs is not None:
-            return self._corpus_docs
+        if self.corpus_docs is not None:
+            return self.corpus_docs
         from gcoderag.config import get_paths
 
         return get_paths().corpus / "docs.jsonl"
