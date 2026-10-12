@@ -2,6 +2,7 @@
 from __future__ import annotations
 
 import logging
+import re
 from dataclasses import dataclass
 from pathlib import Path
 from typing import Any, Protocol
@@ -91,10 +92,26 @@ def evaluate_config(questions: list[Question], retriever: DocRetriever, mode: st
     }
 
 
+def keyword_pattern(keyword: str) -> re.Pattern[str]:
+    """Token-boundary pattern for a normalized, lowercased keyword.
+
+    Always anchored at the start of a token. A keyword ending in a digit (a code such as `g1`) must not continue with
+    more digits (`g10`, `g1.5`); a 1-2 character keyword (`p`) must not continue with letters (`program`); longer words
+    may take a suffix (`dwell` matches `dwells`).
+    """
+    if keyword[-1].isdigit():
+        tail = r"(?!\d|\.\d)"
+    elif len(keyword) <= 2:
+        tail = r"(?![a-z])"
+    else:
+        tail = ""
+    return re.compile(rf"(?<![a-z0-9]){re.escape(keyword)}{tail}")
+
+
 def keywords_present(answer: str, keywords: list[str]) -> bool:
-    """True if every keyword occurs in the answer after code normalization and lowercasing."""
+    """True if every keyword occurs as a token in the answer after code normalization and lowercasing."""
     haystack = normalize_codes(answer).lower()
-    return all(normalize_codes(kw).lower() in haystack for kw in keywords)
+    return all(keyword_pattern(normalize_codes(kw).lower()).search(haystack) for kw in keywords)
 
 
 def results_markdown(results: dict[str, Any]) -> str:

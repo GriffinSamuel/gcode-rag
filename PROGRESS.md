@@ -71,7 +71,7 @@ The Stop hook reads this file: unchecked boxes mean "not finished".
 
 ## Phase 6: Verification
 
-- [ ] 6.1 Run the `final-reviewer` subagent on the whole repo. Fix every finding it marks MUST-FIX. Log findings
+- [x] 6.1 Run the `final-reviewer` subagent on the whole repo. Fix every finding it marks MUST-FIX. Log findings
       and fixes in `docs/DECISIONS.md`.
 - [ ] 6.2 `.venv/Scripts/python.exe scripts/verify_done.py` prints `ALL CHECKS PASSED`; `git status --porcelain`
       is empty; every box above is checked.

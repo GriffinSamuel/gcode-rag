@@ -1,3 +1,6 @@
+// Adapted from the LinuxCNC documentation. Copyright (c) 2000-2025 LinuxCNC.org.
+// Licensed under the GNU Free Documentation License, Version 1.1 or any later version
+// (no Invariant Sections, no Front-Cover Texts, no Back-Cover Texts). Test fixture only.
 :lang: en
 :toc:
 

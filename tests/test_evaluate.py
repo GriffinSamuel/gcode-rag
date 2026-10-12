@@ -39,3 +39,12 @@ def test_evaluate_config_on_toy_corpus(toy_retriever) -> None:
 def test_keywords_present_normalizes_codes() -> None:
     assert keywords_present("Use G01 with an F word.", ["g1", "f"])
     assert not keywords_present("Use G0.", ["g1"])
+
+
+def test_keywords_match_whole_tokens_not_substrings() -> None:
+    assert not keywords_present("Use M30 to end the program [1].", ["p"])
+    assert keywords_present("Program G4 P2 to wait.", ["p"])
+    assert not keywords_present("Use G10 L2 to set offsets.", ["g1"])
+    assert not keywords_present("G1.5 is not a code.", ["g1"])
+    assert keywords_present("Each block dwells; see block delete.", ["dwell", "block delete"])
+    assert not keywords_present("Use modifiers.", ["if"])

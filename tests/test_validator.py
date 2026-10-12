@@ -233,3 +233,12 @@ def test_cli_exit_codes(tmp_path, capsys) -> None:
     assert main([str(good)]) == 0
     assert main([str(bad), "--json"]) == 1
     assert '"rule": "E010"' in capsys.readouterr().out
+
+
+def test_haas_canned_cycles_have_their_own_modal_group() -> None:
+    safe_start = HAAS_VALID.replace("G20 G90 G17", "G00 G17 G40 G49 G80 G90\nG20")
+    assert validate(safe_start, "haas").ok
+    assert "E004" in rules(validate(program("G0 G80 X1")))                 # LinuxCNC: same group 1
+    assert "E004" in rules(validate(program("G81 G83 X1 Z-1 R1"), "haas"))  # still one cycle per block
+    report = validate("%\nO1\nG20 G90\nS500 M3\nG80 G01 X1.\nM30\n%\n", "haas")
+    assert "E005" in rules(report)                                        # G1 (not G80) sets the motion mode

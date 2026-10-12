@@ -13,7 +13,7 @@ when the validator finds errors it sends them back to the model for another atte
 The parts, and the one thing worth saying about each:
 
 1. **Corpus.** The 9 LinuxCNC AsciiDoc files are parsed into 150 sections (one per `==` heading), then split into
-   276 chunks of about 250 words. Every chunk keeps a citation URL with the section anchor. I also wrote a Haas
+   276 chunks (250-word target, median 191 words). Every chunk keeps a citation URL with the section anchor. I also wrote a Haas
    scraper with a robots.txt check and rate limiting. Haas returned HTTP 403, so I documented the skip instead of
    working around it.
 2. **Retrieval.** `bge-small-en-v1.5` dense embeddings plus BM25, fused with Reciprocal Rank Fusion (k = 60). The
@@ -27,8 +27,13 @@ The parts, and the one thing worth saying about each:
    explained line by line.
 5. **Generate-validate-retry.** The model writes a program, the validator checks it, and up to 2 retries get the
    exact error lines back.
-6. **Gradio app** with three tabs. It still works without an API key (retrieval-only).
-7. **Tests:** 90+ offline tests that run in about 10 seconds, using a fake embedder and a scripted fake LLM.
+6. **A bug worth telling:** taken literally, the spec's "nearest anchor within 3 lines" rule gives the first
+   section of each file the *chapter* anchor, because the lookback crosses the level-1 heading (`[[cha:g-codes]]`,
+   `= G-Codes`, blank line, `== Conventions`). The parser stops the lookback at any heading, and a parser test pins
+   it (`Conventions` gets `sec-conventions`). It is a small bug, but a wrong anchor produces a wrong
+   citation link, which is exactly the error a RAG system must not make.
+7. **Gradio app** with three tabs. It still works without an API key (retrieval-only).
+8. **Tests:** 95 offline tests that run in about 10 seconds, using a fake embedder and a scripted fake LLM.
 
 ## Results
 
@@ -60,6 +65,10 @@ Raise these yourself before you are asked:
 - **Known misses:** "pause the program for two seconds" retrieves M0/M1 *Program Pause* instead of G4 *Dwell*, because
   of the shared word "pause". G53 (machine coordinates) lands at rank 7, and the override controls M48/M49 at rank 8.
   A fix would be a small synonym map or a cross-encoder re-ranker. I did not tune against the test set.
+- **A good RRF story for the q050 miss:** BM25 alone ranks G4 *first* for that question, but hybrid loses it. G4 is not
+  in dense's top 50 chunks, so RRF gives it a single term (about 1/61). M60 and M0/M1 sit near the top of *both*
+  lists and get two terms each (about 2/62). RRF rewards agreement between rankers, and that hurts when one ranker
+  is confidently right and the other is wrong. A weighted fusion or a re-ranker would address it.
 - **The corpus is LinuxCNC only.** Haas blocked the scraper.
 - **The validator is not a simulator.** It knows nothing about fixtures, tool lengths or collisions, and it skips
   `#` parameters. The Safety sentence is in the README and the app footer.

@@ -65,6 +65,13 @@ MODAL_GROUPS: dict[str, frozenset[str]] = {
     "M spindle": _codes("M", "3 4 5"),
     "M override": _codes("M", "48 49"),
 }
+# Haas/Fanuc keep G80-G89 (+G73, G76) in their own group 09, so `G00 G17 G40 G49 G80 G90` is a legal Haas safe-start line.
+HAAS_CANNED_GROUP = _codes("G", "73 76 80-89")
+HAAS_MODAL_GROUPS: dict[str, frozenset[str]] = {
+    **MODAL_GROUPS,
+    "G motion": MODAL_GROUPS["G motion"] - HAAS_CANNED_GROUP,
+    "G canned cycle": HAAS_CANNED_GROUP,
+}
 FEED_MOTION = _codes("G", "1 2 3 33 73 76 81-89 12 13 150")
 CANNED_CYCLES = _codes("G", "73 76 81-89")
 POSITION_MOTION = _codes("G", "0 1 2 3") | CANNED_CYCLES
@@ -234,6 +241,7 @@ class GcodeValidator:
         self.extra_codes = set(extra_codes or ())
         self.corpus_docs = corpus_docs
         self.use_corpus = use_corpus
+        self.modal_groups = HAAS_MODAL_GROUPS if dialect == "haas" else MODAL_GROUPS
         self._known: frozenset[str] | None = None
 
     @property
@@ -276,7 +284,7 @@ class GcodeValidator:
         codes = [code_name(w.letter, w.value) for w in block.words if w.letter in "GM"]
         letters = {w.letter for w in block.words}
         found += [("E003", f"unknown code {c} for dialect {self.dialect}") for c in codes if c not in self.known_codes]
-        found += _modal_conflicts(codes)
+        found += _modal_conflicts(codes, self.modal_groups)
         found += _check_words(block, state)
         found += _check_tool_and_spindle(codes, letters, state)
         found += self._check_motion(block, codes, letters, state)
@@ -289,7 +297,8 @@ class GcodeValidator:
         state.inches = _modal_flag(codes, "G20", "G21", state.inches)
         motions = [c for c in codes if c in MODAL_GROUPS["G motion"]]
         if motions:
-            state.motion = motions[-1]
+            # G80 alongside another motion code (legal on Haas) cancels the cycle; the other code sets the mode.
+            state.motion = ([c for c in motions if c != "G80"] or motions)[-1]
         has_axes = bool(letters & set("XYZABCUVW"))
         if any(c in AXIS_CONSUMERS for c in codes):
             return found
@@ -361,10 +370,10 @@ def _modal_flag(codes: list[str], on: str, off: str, current: bool) -> bool:
     return current
 
 
-def _modal_conflicts(codes: list[str]) -> list[tuple[str, str]]:
+def _modal_conflicts(codes: list[str], groups: dict[str, frozenset[str]]) -> list[tuple[str, str]]:
     """E004: two codes from one modal group in a block (M9 conflicts with M7/M8; M7+M8 is allowed)."""
     found = []
-    for group, members in MODAL_GROUPS.items():
+    for group, members in groups.items():
         hits = list(dict.fromkeys(c for c in codes if c in members))
         if len(hits) > 1:
             found.append(("E004", f"{' and '.join(hits)} are both in the {group} modal group"))

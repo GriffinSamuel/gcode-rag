@@ -1,6 +1,6 @@
-{"id": "q001", "category": "code_lookup", "question": "What does G4 do and which word sets the dwell time?", "gold_doc_ids": ["linuxcnc:gcode:g4"], "answer_keywords": ["dwell", "p"]}
+{"id": "q001", "category": "code_lookup", "question": "What does G4 do and which word sets the dwell time?", "gold_doc_ids": ["linuxcnc:gcode:g4"], "answer_keywords": ["dwell", "seconds"]}
 {"id": "q002", "category": "code_lookup", "question": "How do I make a rapid positioning move?", "gold_doc_ids": ["linuxcnc:gcode:g0"], "answer_keywords": ["g0"]}
-{"id": "q003", "category": "parameters", "question": "Which words can I use to define the center of an arc with G2 or G3?", "gold_doc_ids": ["linuxcnc:gcode:g2-g3"], "answer_keywords": ["i", "j"]}
+{"id": "q003", "category": "parameters", "question": "Which words can I use to define the center of an arc with G2 or G3?", "gold_doc_ids": ["linuxcnc:gcode:g2-g3"], "answer_keywords": ["center"]}
 {"id": "q004", "category": "code_lookup", "question": "I want the spindle to turn clockwise. Which M code do I use?", "gold_doc_ids": ["linuxcnc:mcode:m3-m4-m5"], "answer_keywords": ["m3"]}
 {"id": "q005", "category": "code_lookup", "question": "How do I end the program and rewind to the start?", "gold_doc_ids": ["linuxcnc:mcode:m2-m30"], "answer_keywords": ["m30"]}
 {"id": "q006", "category": "code_lookup", "question": "Which code performs a tool change?", "gold_doc_ids": ["linuxcnc:mcode:m6"], "answer_keywords": ["m6"]}
@@ -32,7 +32,7 @@
 {"id": "q032", "category": "syntax", "question": "What does the block delete character at the start of a line do?", "gold_doc_ids": ["linuxcnc:sec-format-of-a-line"], "answer_keywords": ["block delete"]}
 {"id": "q033", "category": "syntax", "question": "How do I write a subroutine and call it?", "gold_doc_ids": ["linuxcnc:ocode:subroutines"], "answer_keywords": ["sub", "call"]}
 {"id": "q034", "category": "syntax", "question": "How do I write a while loop in a program?", "gold_doc_ids": ["linuxcnc:ocode:looping"], "answer_keywords": ["while"]}
-{"id": "q035", "category": "syntax", "question": "How do I branch with an if / else condition in a part program?", "gold_doc_ids": ["linuxcnc:ocode:conditional"], "answer_keywords": ["if"]}
+{"id": "q035", "category": "syntax", "question": "How do I branch with an if / else condition in a part program?", "gold_doc_ids": ["linuxcnc:ocode:conditional"], "answer_keywords": ["endif"]}
 {"id": "q036", "category": "syntax", "question": "How do numbered parameters like #1 work?", "gold_doc_ids": ["linuxcnc:sec:overview-parameters"], "answer_keywords": ["parameter"]}
 {"id": "q037", "category": "safety_practice", "question": "What are recommended best practices for writing G-code programs?", "gold_doc_ids": ["linuxcnc:gcode:best-practices"], "answer_keywords": ["program"]}
 {"id": "q038", "category": "safety_practice", "question": "How do I send the machine to a stored safe position, for example before a tool change?", "gold_doc_ids": ["linuxcnc:gcode:g28-g28.1", "linuxcnc:gcode:g30-g30.1"], "answer_keywords": ["predefined"]}

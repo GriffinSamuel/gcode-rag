@@ -8,7 +8,7 @@ that compares three retrieval configurations.
 
 - **Retrieval:** dense embeddings (`BAAI/bge-small-en-v1.5`) + BM25, fused with Reciprocal Rank Fusion (k = 60)
 - **Generation:** pluggable LLM (Anthropic, or any OpenAI-compatible endpoint such as Groq, Gemini or Ollama)
-- **Validation:** rule-based Python with 16 rules, no LLM in the loop, 30+ unit tests
+- **Validation:** rule-based Python with 16 rules, no LLM in the loop, 31 unit tests
 - **UI:** Gradio app with three tabs: *Ask the manual*, *Generate G-code*, *Validate G-code*
 
 Headline numbers (from [results/results.json](results/results.json)): hybrid retrieval puts a correct manual
@@ -21,7 +21,7 @@ Answer accuracy has not been measured yet because this build ran without an LLM 
 ```
                LinuxCNC AsciiDoc sources (g-code, m-code, overview, o-code, ... 9 files)
                                       |
-             gcoderag/ingest   parse "== heading" sections -> 150 docs -> 276 chunks (~250 words)
+             gcoderag/ingest   parse "== heading" sections -> 150 docs -> 276 chunks (median 191 words)
                                       |
                  +--------------------+---------------------+
                  |                                          |
@@ -45,7 +45,7 @@ Answer accuracy has not been measured yet because this build ran without an LLM 
 | --- | --- |
 | `gcoderag/ingest/linuxcnc.py` | Downloads the LinuxCNC `.adoc` sources from GitHub and splits them into one document per level-2 section, keeping the section anchor for citation URLs |
 | `gcoderag/ingest/haas.py` | Best-effort Haas scraper (robots check, 1 request/s). Haas returned HTTP 403, so the corpus is LinuxCNC only (see Decisions) |
-| `gcoderag/ingest/chunker.py` | Paragraph packing to 250 words (max 400, 40-word overlap) |
+| `gcoderag/ingest/chunker.py` | Paragraph packing to a 250-word target (max 400, 40-word overlap); median chunk 191 words |
 | `gcoderag/textnorm.py` | `normalize_codes` (`G01`/`g 01` -> `G1`, `G38.2` unchanged) applied to chunks *and* queries |
 | `gcoderag/index.py` | `DenseIndex`, `BM25Index`, `HybridRetriever` (RRF, ties broken by dense score) |
 | `gcoderag/rag.py` | Grounded answers with `[n]` citations and a `NOT_IN_DOCS` refusal |
@@ -61,7 +61,7 @@ Answer accuracy has not been measured yet because this build ran without an LLM 
 | E001 | error | Stray characters / malformed words |
 | E002 | error | Letter without a number, or an unparseable value (`X1.2.3`) |
 | E003 | error | G/M code unknown for the dialect (built-in lists + every code in the corpus) |
-| E004 | error | Two codes from one modal group in a block (`G0 G1`, `G90 G91`, `M8 M9`) |
+| E004 | error | Two codes from one modal group in a block (`G0 G1`, `G90 G91`, `M8 M9`). In the `haas` dialect, canned cycles (G73, G76, G80-G89) are their own group as on Fanuc controls, so `G00 G80` is legal there |
 | E005 | error | Feed move (G1/G2/G3/canned cycles) before any F word |
 | E006 | error | G2/G3 without I, J, K or R |
 | E007 | error | M6 with no T number given |
@@ -181,7 +181,9 @@ text names a G/M code (Recall@5 is 1.00 for all three configs on the code questi
   dense's recall (0.9464) and raises the first-hit rate from 57 % to 75 %. The best config is `hybrid_rrf`.
 - **Remaining misses** (hybrid, not in the top 5): q050 "pause the program for two seconds" (G4 Dwell is outranked by
   M0/M1 *Program Pause* and M60 *Pallet Change Pause*, which use the word "pause"), q017 machine coordinates (G53, at
-  rank 7), and q045 disabling overrides (M48/M49, at rank 8).
+  rank 7), and q045 disabling overrides (M48/M49, at rank 8). q050 also shows a failure mode of RRF:
+  `bm25_only` ranks G4 *first*, but G4 is not among dense's top 50 chunks, so it gets only one RRF term (about 1/61).
+  M60 and M0/M1 are near the top of *both* lists and get two terms each (about 2/62), so they outrank it.
 
 **Validator on the example programs** ([results/validator_report.json](results/validator_report.json)): all 7
 examples match their expected outcome. The 3 valid programs (a LinuxCNC pocket, a peck-drilling pattern and a Haas
@@ -207,7 +209,8 @@ The full log with timestamps is in [docs/DECISIONS.md](docs/DECISIONS.md). The m
   queries. Later chunks of a section get the section title prepended before indexing, so the code name is always
   searchable.
 - **The validator is deterministic Python, not an LLM.** Safety checks need to be reproducible and explainable.
-  `E005`/`W102` are reported once per program so that the retry prompt stays short.
+  `E005`/`W102` are reported once per program so that the retry prompt stays short. The `haas` dialect keeps
+  canned cycles in their own modal group, so the standard Haas safe-start line `G00 G17 G40 G49 G80 G90` passes.
 - **Retrieval-only fallback.** The build ran without an LLM key, so every LLM path is tested with a scripted
   `FakeLLM`, and the app degrades gracefully instead of failing.
 - **Honest evaluation.** The gold ids were fixed before the first run. Hybrid met the 0.75 Recall@5 target on the
@@ -221,3 +224,12 @@ The full log with timestamps is in [docs/DECISIONS.md](docs/DECISIONS.md). The m
 - The validator does not interpret `#` parameters, expressions or o-code control flow (W106), and it does not check
   cutter compensation or tool-length geometry.
 - The 56 questions were written by the builder, not collected from real users.
+
+## License
+
+The code is MIT licensed (see [LICENSE](LICENSE)). The documentation that the assistant answers from is
+Copyright (c) 2000-2025 LinuxCNC.org and licensed under the GNU Free Documentation License 1.1 or later (stated in
+`docs/src/common/overleaf.adoc` of the LinuxCNC repository). The repository does not redistribute that
+documentation: `scripts/build_corpus.py` downloads it at build time, and every answer links back to the source
+section. The one exception is the small test fixture `tests/fixtures/linuxcnc_snippet.adoc`, which keeps its GFDL
+notice. No Haas manual content is included.
