@@ -63,7 +63,7 @@ The Stop hook reads this file: unchecked boxes mean "not finished".
 
 - [x] 5.1 `app.py`: Gradio app with tabs `Ask the manual`, `Generate G-code`, `Validate G-code` (SPEC 8). Works in
       retrieval-only mode when no key. Test: `tests/test_app.py` builds the Blocks object without launching.
-- [ ] 5.2 `README.md` per CLAUDE.md section 8 with real numbers from `results/results.json`.
+- [x] 5.2 `README.md` per CLAUDE.md section 8 with real numbers from `results/results.json`.
 - [ ] 5.3 Deployment prepared per `docs/DEPLOY.md` (`deploy/README_HF.md` front matter, `requirements.txt`
       compatible). Deploy only if `HF_TOKEN` is set; otherwise leave exact instructions in README.
 - [ ] 5.4 `FINAL_REPORT.md` (>= 300 words) with headings `What was built`, `Results`, `Limitations`, `Demo`,
