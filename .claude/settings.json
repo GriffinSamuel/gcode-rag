@@ -67,8 +67,6 @@
       "Read(./.env)",
       "Edit(./.env)",
       "Write(./.env)",
-      "Bash(git push*)",
-      "Bash(git remote add*)",
       "Bash(git reset --hard*)",
       "Bash(git clean*)",
       "Bash(git checkout -- .)",
