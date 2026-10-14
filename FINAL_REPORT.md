@@ -32,7 +32,7 @@ The parts, and the one thing worth saying about each:
    `= G-Codes`, blank line, `== Conventions`). The parser stops the lookback at any heading, and a parser test pins
    it (`Conventions` gets `sec-conventions`). It is a small bug, but a wrong anchor produces a wrong
    citation link, which is exactly the error a RAG system must not make.
-7. **Gradio app** with three tabs. It still works without an API key (retrieval-only).
+7. **Gradio app** with three tabs. It still works without an LLM (retrieval-only) and runs against a free local model through Ollama.
 8. **Tests:** 95 offline tests that run in about 10 seconds, using a fake embedder and a scripted fake LLM.
 
 ## Results
@@ -45,6 +45,7 @@ Quote these (from `results/results.json`, 56 questions, 44 of them phrased witho
 | bm25_only | 0.5714 | 0.8571 | 0.7008 |
 | hybrid_rrf | 0.7500 | 0.9464 | 0.8363 |
 
+- **Answer evaluation:** keyword accuracy **0.8929** (50/56) with `qwen2.5-coder:7b` via Ollama. Generated answers come from qwen2.5-coder:7b running locally through Ollama; no paid API is required.
 - **The line to remember:** "Hybrid retrieval finds a correct section in the top 5 for 95 % of questions, and
   ranks it first for 75 %, up from 57 % with either method alone."
 - **Why hybrid wins (this is the interesting part):** on the 12 questions that name a code, BM25 ranks the right
@@ -59,9 +60,10 @@ Quote these (from `results/results.json`, 56 questions, 44 of them phrased witho
 
 Raise these yourself before you are asked:
 
-- **Answer accuracy is not measured yet.** The build ran without an LLM key, so the keyword-accuracy evaluation is
-  recorded as `skipped_no_llm_key`. The code path is built and tested with a fake LLM. To measure it, add a key to
-  `.env` and run `scripts/run_eval.py`. Keyword accuracy is a cheap proxy, not a human judgment.
+- **Answer accuracy is a proxy.** Keyword accuracy is 0.8929 (50/56) with `qwen2.5-coder:7b` running locally through
+  Ollama (no paid API). It checks that the expected keywords appear, not that the answer is correct or cited:
+  only 11 of 56 answers carry a `[n]` citation and 4 are `NOT_IN_DOCS`. It is a cheap proxy, not a
+  human judgment.
 - **Known misses:** "pause the program for two seconds" retrieves M0/M1 *Program Pause* instead of G4 *Dwell*, because
   of the shared word "pause". G53 (machine coordinates) lands at rank 7, and the override controls M48/M49 at rank 8.
   A fix would be a small synonym map or a cross-encoder re-ranker. I did not tune against the test set.

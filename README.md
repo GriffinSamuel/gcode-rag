@@ -14,7 +14,7 @@ that compares three retrieval configurations.
 Headline numbers (from [results/results.json](results/results.json)): hybrid retrieval puts a correct manual
 section in the top 5 for **94.6 %** of questions (Recall@5 0.9464) and ranks it first for **75 %** (Recall@1
 0.75, MRR 0.8363).
-Answer accuracy has not been measured yet because this build ran without an LLM key (details under Results).
+Answer accuracy (keyword proxy) is **0.8929** on the same 56 questions, using `qwen2.5-coder:7b` running locally through Ollama (details under Results).
 
 ## Architecture
 
@@ -84,7 +84,7 @@ python -m venv .venv
 .venv/Scripts/python.exe -m pip install --upgrade pip
 .venv/Scripts/python.exe -m pip install -r requirements.txt
 
-cp .env.example .env            # optional: add an LLM key; leave blank for retrieval-only mode
+cp .env.example .env            # optional: add an LLM; leave the key blank for retrieval-only mode
 .venv/Scripts/python.exe scripts/check_env.py          # prints the mode, never the key
 
 .venv/Scripts/python.exe scripts/build_corpus.py       # downloads docs -> data/corpus/ (SKIP_HAAS=1 skips Haas)
@@ -115,6 +115,26 @@ network). `RUN_SLOW=1` adds the real-embedding integration test.
 `LLM_PROVIDER=openai_compatible` with `LLM_API_KEY`, `LLM_MODEL` and `LLM_BASE_URL` (Groq, Gemini's OpenAI endpoint,
 Ollama, OpenAI). Without a key, *Ask the manual* shows the top 5 passages with links and *Generate G-code* is disabled.
 *Validate G-code* never needs a key.
+
+**Free local LLM with Ollama** (what produced the answer evaluation above). Install [Ollama](https://ollama.com),
+then:
+
+```bash
+ollama pull qwen2.5-coder:7b
+ollama serve                    # skip if the Ollama tray app is already running (it serves on port 11434)
+```
+
+and put these four lines in `.env`:
+
+```
+LLM_PROVIDER=openai_compatible
+LLM_BASE_URL=http://localhost:11434/v1
+LLM_MODEL=qwen2.5-coder:7b
+LLM_API_KEY=ollama
+```
+
+(`LLM_API_KEY` is a dummy value; Ollama ignores it.) Check with `scripts/check_env.py`, then run
+`scripts/run_eval.py` to fill in `answer_eval` and `results/answers.jsonl`.
 
 ### Deploying to Hugging Face Spaces
 
@@ -159,9 +179,9 @@ Copied from [results/results.md](results/results.md):
 | bm25_only | 0.5714 | 0.8571 | 0.7008 |
 | hybrid_rrf | 0.7500 | 0.9464 | 0.8363 |
 
-Answer evaluation skipped: no LLM key configured. (`results.json` records `"answer_eval": {"status":
-"skipped_no_llm_key"}`. Add a key to `.env` and re-run `scripts/run_eval.py` to fill in keyword accuracy and
-`results/answers.jsonl`.)
+**Answer evaluation:** keyword accuracy **0.8929** (50/56 questions) with `qwen2.5-coder:7b` (`openai_compatible`, Ollama), config `hybrid_rrf`. Generated answers come from qwen2.5-coder:7b running locally through Ollama; no paid API is required.
+
+Only 11 of the 56 answers contain a `[n]` citation marker and 4 are `NOT_IN_DOCS`: the 7B local model often answers tersely without citing, so keyword accuracy says the right facts appear, not that every answer is cited. Failed questions: q005, q015, q019, q038, q050, q056. Per-question answers are in [results/answers.jsonl](results/answers.jsonl).
 
 **Why the numbers differ.** I split the per-question ranks in `results.json` (`per_question`) by whether the question
 text names a G/M code (Recall@5 is 1.00 for all three configs on the code questions):
@@ -211,14 +231,15 @@ The full log with timestamps is in [docs/DECISIONS.md](docs/DECISIONS.md). The m
 - **The validator is deterministic Python, not an LLM.** Safety checks need to be reproducible and explainable.
   `E005`/`W102` are reported once per program so that the retry prompt stays short. The `haas` dialect keeps
   canned cycles in their own modal group, so the standard Haas safe-start line `G00 G17 G40 G49 G80 G90` passes.
-- **Retrieval-only fallback.** The build ran without an LLM key, so every LLM path is tested with a scripted
-  `FakeLLM`, and the app degrades gracefully instead of failing.
+- **Retrieval-only fallback.** Every LLM path is tested with a scripted `FakeLLM`, and the app degrades gracefully
+  to showing cited passages when no LLM is configured. The measured answer evaluation uses a free local model
+  (`qwen2.5-coder:7b` via Ollama), so no paid API is needed.
 - **Honest evaluation.** The gold ids were fixed before the first run. Hybrid met the 0.75 Recall@5 target on the
   first run, so no retrieval tuning was done against the test set.
 
 ## Limitations
 
-- Answer quality is unmeasured until an LLM key is added. Keyword accuracy is a proxy, not a human evaluation.
+- Keyword accuracy is a proxy, not a human evaluation, and the local 7B model cites passages in only 11 of 56 answers (see Results).
 - The corpus covers LinuxCNC only. Haas questions are answered from LinuxCNC text, and the two dialects differ in
   places (for example canned-cycle details and the codes available).
 - The validator does not interpret `#` parameters, expressions or o-code control flow (W106), and it does not check

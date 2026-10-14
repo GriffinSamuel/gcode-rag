@@ -6,4 +6,4 @@
 
 - Questions: 56; embedding model: BAAI/bge-small-en-v1.5; corpus: 150 docs / 276 chunks (sources: {'linuxcnc': 150, 'haas': 0})
 - Best config by recall@5: hybrid_rrf
-- Answer evaluation skipped: no LLM key configured
+- Answer evaluation (openai_compatible qwen2.5-coder:7b, hybrid_rrf): keyword accuracy 0.8929 over 56 questions

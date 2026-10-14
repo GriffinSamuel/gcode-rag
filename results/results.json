@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-10-12T21:55:36Z",
+  "generated_at": "2026-10-14T23:13:58Z",
   "corpus": {
     "num_docs": 150,
     "num_chunks": 276,
@@ -38,7 +38,12 @@
   ],
   "best_config": "hybrid_rrf",
   "answer_eval": {
-    "status": "skipped_no_llm_key"
+    "status": "done",
+    "config": "hybrid_rrf",
+    "provider": "openai_compatible",
+    "model": "qwen2.5-coder:7b",
+    "n": 56,
+    "keyword_accuracy": 0.8929
   },
   "per_question": {
     "dense_baseline": [

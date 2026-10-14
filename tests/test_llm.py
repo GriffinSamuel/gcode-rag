@@ -48,3 +48,18 @@ def test_with_retries_reraises_after_last_attempt() -> None:
 
     with pytest.raises(ValueError):
         with_retries(boom, retries=2, base_delay=0.0, sleep=lambda _: None)
+
+
+def test_strip_think_removes_reasoning_blocks() -> None:
+    from gcoderag.llm import strip_think
+
+    assert strip_think("<think>plan\nmore</think>\n  PONG ") == "PONG"
+    assert strip_think("A <think>x</think>B <think>y</think>") == "A B"
+    assert strip_think("no tags") == "no tags"
+
+
+def test_openai_client_uses_long_timeout() -> None:
+    from gcoderag.llm import OPENAI_TIMEOUT_S, OpenAICompatibleLLM
+
+    llm = OpenAICompatibleLLM("ollama", "qwen2.5-coder:7b", "http://localhost:11434/v1")
+    assert OPENAI_TIMEOUT_S >= 120 and llm._client.timeout == OPENAI_TIMEOUT_S
