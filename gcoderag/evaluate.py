@@ -25,6 +25,10 @@ class Question:
     question: str
     gold_doc_ids: list[str]
     answer_keywords: list[str]
+    split: str = "test"   # "dev" (used for tuning) or "test" (held out); see docs/EVAL.md
+
+
+SPLITS = ("dev", "test")
 
 
 @dataclass(frozen=True)
@@ -73,23 +77,44 @@ def evaluate_config(questions: list[Question], retriever: DocRetriever, mode: st
     """Recall@1, Recall@5 and MRR for one retrieval mode, plus per-question first-gold ranks."""
     if not questions:
         raise ValueError("no questions to evaluate")
-    r1 = r5 = mrr = 0.0
     per_question: list[dict[str, Any]] = []
     for q in questions:
         ranked = retriever.retrieve_docs(q.question, k=RETRIEVAL_K, mode=mode)
-        gold = set(q.gold_doc_ids)
-        rr = reciprocal_rank(ranked, gold, max_rank=RETRIEVAL_K)
-        r1 += recall_at_k(ranked, gold, 1)
-        r5 += recall_at_k(ranked, gold, 5)
-        mrr += rr
+        rr = reciprocal_rank(ranked, set(q.gold_doc_ids), max_rank=RETRIEVAL_K)
         per_question.append({"id": q.id, "rank": round(1 / rr) if rr else None, "top": ranked[:3]})
-    n = len(questions)
+    return {**metrics_from_ranks([row["rank"] for row in per_question]), "per_question": per_question}
+
+
+def metrics_from_ranks(ranks: list[int | None]) -> dict[str, float]:
+    """Recall@1, Recall@5 and MRR from the rank of the first gold doc per question (None = not in the top 10)."""
+    if not ranks:
+        raise ValueError("no questions to evaluate")
+    n = len(ranks)
     return {
-        "recall_at_1": round(r1 / n, DECIMALS),
-        "recall_at_5": round(r5 / n, DECIMALS),
-        "mrr": round(mrr / n, DECIMALS),
-        "per_question": per_question,
+        "recall_at_1": round(sum(1.0 for r in ranks if r == 1) / n, DECIMALS),
+        "recall_at_5": round(sum(1.0 for r in ranks if r is not None and r <= 5) / n, DECIMALS),
+        "mrr": round(sum(1.0 / r for r in ranks if r is not None) / n, DECIMALS),
     }
+
+
+def select_split(questions: list[Question], split: str) -> list[Question]:
+    """Questions of one split ("dev" or "test"); "all" returns every question."""
+    if split == "all":
+        return list(questions)
+    if split not in SPLITS:
+        raise ValueError(f"split must be one of {SPLITS + ('all',)}, got {split!r}")
+    return [q for q in questions if q.split == split]
+
+
+def retrieval_by_split(questions: list[Question], per_question: list[dict[str, Any]]) -> dict[str, dict[str, Any]]:
+    """Retrieval metrics per split, from the per-question ranks of one config (same math as the overall numbers)."""
+    rank_of = {row["id"]: row["rank"] for row in per_question}
+    out: dict[str, dict[str, Any]] = {}
+    for split in SPLITS:
+        ranks = [rank_of[q.id] for q in questions if q.split == split]
+        if ranks:
+            out[split] = {"n": len(ranks), **metrics_from_ranks(ranks)}
+    return out
 
 
 def keyword_pattern(keyword: str) -> re.Pattern[str]:
@@ -126,10 +151,21 @@ def results_markdown(results: dict[str, Any]) -> str:
         f"(sources: {results['corpus']['sources']})",
         f"- Best config by recall@5: {results['best_config']}",
     ]
+    by_split = results.get("by_split") or {}
+    if by_split:
+        lines += ["", "| split | n | config | recall@1 | recall@5 | MRR |", "| --- | --- | --- | --- | --- | --- |"]
+        for split, block in by_split.items():
+            lines += [f"| {split} | {block['n']} | {name} | {m['recall_at_1']:.4f} | {m['recall_at_5']:.4f} | "
+                      f"{m['mrr']:.4f} |" for name, m in block["configs"].items()]
+        lines.append("")
     answer_eval = results.get("answer_eval", {})
     if answer_eval.get("status") == "done":
         lines.append(f"- Answer evaluation ({answer_eval['provider']} {answer_eval['model']}, {answer_eval['config']}): "
-                     f"keyword accuracy {answer_eval['keyword_accuracy']:.4f} over {answer_eval['n']} questions")
+                     f"keyword accuracy {answer_eval['keyword_accuracy']:.4f} over {answer_eval['n']} questions"
+                     + (f", citation rate {answer_eval['citation_rate']:.4f}" if "citation_rate" in answer_eval else ""))
+        for split, row in (answer_eval.get("by_split") or {}).items():
+            lines.append(f"  - {split}: keyword accuracy {row['keyword_accuracy']:.4f}, citation rate "
+                         f"{row['citation_rate']:.4f} (n={row['n']})")
     else:
         lines.append("- Answer evaluation skipped: no LLM key configured")
     return "\n".join(lines) + "\n"

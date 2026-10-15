@@ -7,8 +7,8 @@ demo in five minutes.
 
 **One-sentence pitch:** "A RAG assistant for CNC machinists. It answers G-code questions with citations to the exact
 section of the LinuxCNC manual. It generates G-code programs and checks them with a deterministic validator, and
-when the validator finds errors it sends them back to the model for another attempt. I measured the retrieval on a
-56-question test set."
+when the validator finds errors it sends them back to the model for another attempt. I measured it on a
+177-question set with a held-out test split."
 
 The parts, and the one thing worth saying about each:
 
@@ -37,36 +37,43 @@ The parts, and the one thing worth saying about each:
 
 ## Results
 
-Quote these (from `results/results.json`, 56 questions, 44 of them phrased without naming the code):
+Quote these (from `results/results.json`, 177 questions, 164 of them phrased without naming the code):
+
+| split | n | keyword accuracy | citation rate |
+| --- | --- | --- | --- |
+| dev (used for tuning) | 71 | 0.8310 | 0.8732 |
+| **test (held out, the headline)** | 106 | **0.9057** | 0.9057 |
+| all | 177 | 0.8757 | 0.8927 |
 
 | config | recall@1 | recall@5 | MRR |
 | --- | --- | --- | --- |
-| dense_baseline | 0.5714 | 0.9464 | 0.6961 |
-| bm25_only | 0.5714 | 0.8571 | 0.7008 |
-| hybrid_rrf | 0.7500 | 0.9464 | 0.8363 |
+| dense_baseline | 0.6893 | 0.9435 | 0.7880 |
+| bm25_only | 0.6215 | 0.8757 | 0.7314 |
+| hybrid_rrf | 0.7401 | 0.9435 | 0.8278 |
 
-- **Answer evaluation:** keyword accuracy **0.8929** (50/56) with `qwen2.5-coder:7b` via Ollama. Generated answers come from qwen2.5-coder:7b running locally through Ollama; no paid API is required.
-- **The line to remember:** "Hybrid retrieval finds a correct section in the top 5 for 95 % of questions, and
-  ranks it first for 75 %, up from 57 % with either method alone."
-- **Why hybrid wins (this is the interesting part):** on the 12 questions that name a code, BM25 ranks the right
-  section first 92 % of the time and dense only 58 %, because embeddings blur `G1`/`G10`/`G41`. On the 44
-  paraphrased questions it flips: dense reaches 0.93 Recall@5 and BM25 0.82. RRF keeps the strengths of both.
+- **The line to remember:** "On 106 held-out test questions the local 7B model, running free through
+  Ollama, gets the expected keywords 90.6 % of the time, and retrieval finds a correct manual
+  section in the top 5 for 94.3 % of all 177 questions."
+- **Why the dev/test split matters (say it like this):** "I split the questions into two piles. I was allowed to
+  peek at the dev pile while I tried to improve the answers, and I only counted the test pile once at the end, like a
+  final exam the model never saw while I was changing things. If I had tuned on all the questions, my score would
+  partly measure how well I fitted those exact questions, not how well it works on new ones." Tuning used only the dev split. I tried three changes, each scored on dev alone, and none beat the baseline (a longer prompt asking for the exact code and word letters 0.8169, six passages with the best one last 0.8169, section headings plus the question repeated 0.8028, baseline 0.8310), so none was kept. The test split was run once, at the end. Test came out higher than dev; with a random split of this size that gap is within noise, and since no tuning change was kept the test number was not tuned on.
+- **Why hybrid wins (this is the interesting part):** on the 13 questions that name a code, BM25 ranks the
+  right section first 92% of the time and dense only 62%, because
+  embeddings blur `G1`/`G10`/`G41`; on the 164 paraphrased questions dense reaches 0.94
+  Recall@5 and BM25 0.87. Fusing them (RRF) puts the right section first more often
+  (Recall@1 0.7401 vs 0.6893 dense and 0.6215 BM25), but Recall@5 only ties
+  dense (0.9435); be ready to say that plainly.
 - **Validator:** all 7 example programs are classified correctly. The 3 valid ones have zero findings, and each of
   the 4 invalid ones triggers exactly the intended rules.
-- **Integrity point:** the gold answers were written before the first evaluation run and never changed afterwards,
-  and no retrieval tuning was done against the test set.
+- **Integrity point:** the gold ids and keywords were fixed before any result was computed for them, tuning used only the dev split, and none of the three tuning changes was kept, so the test number was not tuned on. `scripts/check_questions.py` checks the whole set.
 
 ## Limitations
 
 Raise these yourself before you are asked:
 
-- **Answer accuracy is a proxy.** Keyword accuracy is 0.8929 (50/56) with `qwen2.5-coder:7b` running locally through
-  Ollama (no paid API). It checks that the expected keywords appear, not that the answer is correct or cited:
-  only 11 of 56 answers carry a `[n]` citation and 4 are `NOT_IN_DOCS`. It is a cheap proxy, not a
-  human judgment.
-- **Known misses:** "pause the program for two seconds" retrieves M0/M1 *Program Pause* instead of G4 *Dwell*, because
-  of the shared word "pause". G53 (machine coordinates) lands at rank 7, and the override controls M48/M49 at rank 8.
-  A fix would be a small synonym map or a cross-encoder re-ranker. I did not tune against the test set.
+- **Answer accuracy is a proxy.** Keyword accuracy is 0.8757 overall with `qwen2.5-coder:7b` running locally through Ollama (no paid API). It checks that the expected keywords appear, not that the answer is correct. The citation rate is deterministic: every answer that is not a `NOT_IN_DOCS` refusal gets a source attached (the model's `SOURCES:` line, else its `[n]` markers, else passages whose codes the answer mentions, else the top passage). So it equals 1 minus the refusal rate (19 of 177 answers were refusals) and shows that a source is attached, not that the model chose it correctly. It is a cheap proxy, not a human judgment.
+- **Known misses:** 10 of 177 questions are not in the hybrid top 5 (q017, q045, q050, q099, q100, q121, q151, q152, q155, q158). The best-known: "pause the program for two seconds" retrieves M0/M1 *Program Pause* instead of G4 *Dwell*, because of the shared word "pause". A fix would be a small synonym map or a cross-encoder re-ranker. I did not tune retrieval against the test set.
 - **A good RRF story for the q050 miss:** BM25 alone ranks G4 *first* for that question, but hybrid loses it. G4 is not
   in dense's top 50 chunks, so RRF gives it a single term (about 1/61). M60 and M0/M1 sit near the top of *both*
   lists and get two terms each (about 2/62). RRF rewards agreement between rankers, and that hurts when one ranker
@@ -74,7 +81,7 @@ Raise these yourself before you are asked:
 - **The corpus is LinuxCNC only.** Haas blocked the scraper.
 - **The validator is not a simulator.** It knows nothing about fixtures, tool lengths or collisions, and it skips
   `#` parameters. The Safety sentence is in the README and the app footer.
-- The 56 questions were written by me, not collected from real users.
+- The 177 questions were written by me, not collected from real users, and the random dev/test split means the two halves differ by chance (test scored higher than dev).
 
 ## Demo
 

@@ -3,18 +3,15 @@
 Ask machining questions and get answers grounded in the LinuxCNC G-code documentation, with a citation to the
 exact manual section. Describe a part and get a G-code program that a deterministic validator has checked
 (modal conflicts, missing feed, envelope limits, and more). If the validator finds errors, the program is sent back
-to the model with the error list, up to 3 attempts. The retrieval is measured on a 56-question evaluation set
-that compares three retrieval configurations.
+to the model with the error list, up to 3 attempts. The system is measured on a 177-question evaluation set
+with a dev/test split, comparing three retrieval configurations.
 
 - **Retrieval:** dense embeddings (`BAAI/bge-small-en-v1.5`) + BM25, fused with Reciprocal Rank Fusion (k = 60)
 - **Generation:** pluggable LLM (Anthropic, or any OpenAI-compatible endpoint such as Groq, Gemini or Ollama)
 - **Validation:** rule-based Python with 16 rules, no LLM in the loop, 31 unit tests
 - **UI:** Gradio app with three tabs: *Ask the manual*, *Generate G-code*, *Validate G-code*
 
-Headline numbers (from [results/results.json](results/results.json)): hybrid retrieval puts a correct manual
-section in the top 5 for **94.6 %** of questions (Recall@5 0.9464) and ranks it first for **75 %** (Recall@1
-0.75, MRR 0.8363).
-Answer accuracy (keyword proxy) is **0.8929** on the same 56 questions, using `qwen2.5-coder:7b` running locally through Ollama (details under Results).
+Headline numbers (from [results/results.json](results/results.json)): on the **held-out test split** (106 questions) the local model's answers contain the expected keywords **90.6 %** of the time (dev 83.1 %, all 177 questions 87.6 %). Hybrid retrieval puts a correct manual section in the top 5 for **94.3 %** of the 177 questions (Recall@5 0.9435) and ranks it first for **74.0 %** (Recall@1 0.7401, MRR 0.8278).
 
 ## Architecture
 
@@ -89,7 +86,8 @@ cp .env.example .env            # optional: add an LLM; leave the key blank for 
 
 .venv/Scripts/python.exe scripts/build_corpus.py       # downloads docs -> data/corpus/ (SKIP_HAAS=1 skips Haas)
 .venv/Scripts/python.exe scripts/build_index.py        # embeds 276 chunks -> data/index/ (~1 min on CPU)
-.venv/Scripts/python.exe scripts/run_eval.py           # -> results/results.json, results/results.md
+.venv/Scripts/python.exe scripts/check_questions.py    # validates eval/questions.jsonl (must print ALL CHECKS OK)
+.venv/Scripts/python.exe scripts/run_eval.py           # -> results/results.json, results/results.md (--split dev|test|all)
 .venv/Scripts/python.exe scripts/validate_examples.py  # -> results/validator_report.json
 
 .venv/Scripts/python.exe app.py                        # http://127.0.0.1:7860
@@ -150,60 +148,95 @@ This build has not been deployed (no `HF_TOKEN` was configured). To deploy it yo
 
 ## Evaluation
 
-The evaluation set is [eval/questions.jsonl](eval/questions.jsonl): **56 questions** in 6 categories (code_lookup 21,
-parameters 9, canned_cycles 8, syntax 8, modal_groups 5, safety_practice 5). **44 of the 56 do not contain the code
-they ask about** ("How do I pause the program for two seconds?" rather than "What does G4 do?"), because machinists
-often describe what they want to do instead of naming the code. Each question lists 1-3 gold document ids
-(verified to exist in the corpus) and 1-3 answer keywords taken from the gold text. The gold ids were written before
-the first evaluation run and were not changed afterwards.
+The evaluation set is [eval/questions.jsonl](eval/questions.jsonl): **177 questions** in 6 categories (code_lookup 37, parameters 40, modal_groups 15, syntax 49, canned_cycles 16, safety_practice 20).
+**164 of the 177 do not contain the code they ask about** ("How do I pause the program for two seconds?" rather
+than "What does G4 do?"), because machinists often describe what they want to do instead of naming the code. 28
+questions need two or more documents. Each question lists 1-3 gold document ids (verified to exist in the corpus), 1-3
+answer keywords taken from the gold text, and a `split`. The set was built from the corpus: the first 56 questions were written before any evaluation run, and the other 121 were written to cover the 84 documents that had no question yet (all 150 of the 150 documents are now the gold answer for at least one question), then checked by `scripts/check_questions.py` (schema, unique ids, gold ids exist, every keyword appears as a whole word in the gold text, category minimums, no near-duplicates, split fraction). No retrieval or answer result was computed for the new questions before they were written.
+
+**Dev/test split.** Every question is `dev` (40 %, 71 questions) or `test` (60 %, 106), assigned
+at random with `random.seed(42)`. Dev is for tuning; test is looked at once, at the end. `scripts/run_eval.py --split
+dev` runs the answer evaluation on dev only (and prints only dev numbers); `--split all` is the final run.
 
 Metrics, computed on distinct documents (chunks collapsed to their section first):
 
 - **Recall@k**: fraction of questions with any gold document in the top k (k = 1, 5).
 - **MRR**: mean of 1/rank of the first gold document within the top 10 (0 if absent).
-- **Keyword accuracy** (needs an LLM key): fraction of answers that contain every answer keyword after lowercasing and
-  code normalization. This is a cheap, deterministic proxy for correctness, not a human judgment. It can reject a
-  correct answer that is worded differently, and it can accept a wrong answer that happens to contain the keywords.
+- **Keyword accuracy** (needs an LLM): fraction of answers that contain every answer keyword as a whole word after
+  lowercasing and code normalization. This is a cheap, deterministic proxy for correctness, not a human judgment. It
+  can reject a correct answer that is worded differently, and it can accept a wrong answer that happens to contain the
+  keywords.
+- **Citation rate**: fraction of answers with at least one attached source (see Results for what that does and does
+  not show).
 
-Three configurations: `dense_baseline` (embeddings only), `bm25_only` (lexical only), `hybrid_rrf` (both, fused with
-RRF k = 60, top 50 from each ranker).
+Three retrieval configurations: `dense_baseline` (embeddings only), `bm25_only` (lexical only), `hybrid_rrf` (both,
+fused with RRF k = 60, top 50 from each ranker). Answers always use `hybrid_rrf`.
 
 ## Results
 
-56 questions, embedding model `BAAI/bge-small-en-v1.5`, corpus 150 documents / 276 chunks (LinuxCNC 150, Haas 0).
-Copied from [results/results.md](results/results.md):
+177 questions (71 dev, 106 test), embedding model `BAAI/bge-small-en-v1.5`, corpus
+150 documents / 276 chunks (LinuxCNC 150,
+Haas 0). Copied from [results/results.json](results/results.json).
+
+**Answer evaluation** with `qwen2.5-coder:7b` (`openai_compatible`, Ollama), config `hybrid_rrf`:
+
+| split | n | keyword accuracy | citation rate |
+| --- | --- | --- | --- |
+| dev (used for tuning) | 71 | 0.8310 | 0.8732 |
+| **test (held out, the headline)** | 106 | **0.9057** | 0.9057 |
+| all | 177 | 0.8757 | 0.8927 |
+
+Generated answers come from qwen2.5-coder:7b running locally through Ollama; no paid API is required. Tuning used only the dev split. I tried three changes, each scored on dev alone, and none beat the baseline (a longer prompt asking for the exact code and word letters 0.8169, six passages with the best one last 0.8169, section headings plus the question repeated 0.8028, baseline 0.8310), so none was kept. The test split was run once, at the end. Test came out higher than dev; with a random split of this size that gap is within noise, and since no tuning change was kept the test number was not tuned on.
+
+The citation rate is deterministic: every answer that is not a `NOT_IN_DOCS` refusal gets a source attached (the model's `SOURCES:` line, else its `[n]` markers, else passages whose codes the answer mentions, else the top passage). So it equals 1 minus the refusal rate (19 of 177 answers were refusals) and shows that a source is attached, not that the model chose it correctly. 22 of the 177 answers missed a keyword (per-question answers are in
+[results/answers.jsonl](results/answers.jsonl)).
+
+**Retrieval** (all 177 questions):
 
 | config | recall@1 | recall@5 | MRR |
 | --- | --- | --- | --- |
-| dense_baseline | 0.5714 | 0.9464 | 0.6961 |
-| bm25_only | 0.5714 | 0.8571 | 0.7008 |
-| hybrid_rrf | 0.7500 | 0.9464 | 0.8363 |
+| dense_baseline | 0.6893 | 0.9435 | 0.7880 |
+| bm25_only | 0.6215 | 0.8757 | 0.7314 |
+| hybrid_rrf | 0.7401 | 0.9435 | 0.8278 |
 
-**Answer evaluation:** keyword accuracy **0.8929** (50/56 questions) with `qwen2.5-coder:7b` (`openai_compatible`, Ollama), config `hybrid_rrf`. Generated answers come from qwen2.5-coder:7b running locally through Ollama; no paid API is required.
+and per split:
 
-Only 11 of the 56 answers contain a `[n]` citation marker and 4 are `NOT_IN_DOCS`: the 7B local model often answers tersely without citing, so keyword accuracy says the right facts appear, not that every answer is cited. Failed questions: q005, q015, q019, q038, q050, q056. Per-question answers are in [results/answers.jsonl](results/answers.jsonl).
+| split | n | config | recall@1 | recall@5 | MRR |
+| --- | --- | --- | --- | --- | --- |
+| dev | 71 | dense_baseline | 0.6479 | 0.9577 | 0.7697 |
+| dev | 71 | bm25_only | 0.6197 | 0.8732 | 0.7304 |
+| dev | 71 | hybrid_rrf | 0.7324 | 0.9296 | 0.8176 |
+| test | 106 | dense_baseline | 0.7170 | 0.9340 | 0.8002 |
+| test | 106 | bm25_only | 0.6226 | 0.8774 | 0.7321 |
+| test | 106 | hybrid_rrf | 0.7453 | 0.9528 | 0.8347 |
 
 **Why the numbers differ.** I split the per-question ranks in `results.json` (`per_question`) by whether the question
-text names a G/M code (Recall@5 is 1.00 for all three configs on the code questions):
+text names a G/M code:
 
-| config | names a code (n=12): R@1 / MRR | no code (n=44): R@1 / R@5 / MRR |
+| config | names a code (n=13): R@1 / R@5 / MRR | no code (n=164): R@1 / R@5 / MRR |
 | --- | --- | --- |
-| dense_baseline | 0.58 / 0.72 | 0.57 / 0.93 / 0.69 |
-| bm25_only | 0.92 / 0.94 | 0.48 / 0.82 / 0.64 |
-| hybrid_rrf | 1.00 / 1.00 | 0.68 / 0.93 / 0.79 |
+| dense_baseline | 0.62 / 1.00 / 0.74 | 0.70 / 0.94 / 0.79 |
+| bm25_only | 0.92 / 1.00 / 0.94 | 0.60 / 0.87 / 0.71 |
+| hybrid_rrf | 1.00 / 1.00 / 1.00 | 0.72 / 0.94 / 0.81 |
 
 - **BM25 wins on exact codes.** After `G01 -> G1` normalization, the token `g1` matches the section about G1 almost
-  uniquely. Dense embeddings blur `G1`, `G10` and `G41` together, so dense ranks the right section first for only
-  7 of the 12 code questions.
-- **Dense wins on paraphrases.** "Pause", "stop the spindle" and "machine coordinates" share few tokens with the
-  manual's wording, and that is where BM25 drops to 0.82 Recall@5.
-- **Hybrid gets both.** Each ranker puts the right section first on 10 questions where the other does not. RRF keeps
-  dense's recall (0.9464) and raises the first-hit rate from 57 % to 75 %. The best config is `hybrid_rrf`.
-- **Remaining misses** (hybrid, not in the top 5): q050 "pause the program for two seconds" (G4 Dwell is outranked by
-  M0/M1 *Program Pause* and M60 *Pallet Change Pause*, which use the word "pause"), q017 machine coordinates (G53, at
-  rank 7), and q045 disabling overrides (M48/M49, at rank 8). q050 also shows a failure mode of RRF:
-  `bm25_only` ranks G4 *first*, but G4 is not among dense's top 50 chunks, so it gets only one RRF term (about 1/61).
-  M60 and M0/M1 are near the top of *both* lists and get two terms each (about 2/62), so they outrank it.
+  uniquely. Dense embeddings blur `G1`, `G10` and `G41` together, so on the 13 questions that name a code
+  dense ranks the right section first 62% of the time and BM25 92%.
+- **Dense is better on paraphrases.** Most questions are phrased without a code ("stop the spindle", "machine
+  coordinates"), which share few tokens with the manual's wording; on those 164 questions Recall@5 is
+  0.94 for dense and 0.87 for BM25.
+- **Hybrid wins at the first rank, not at Recall@5.** Dense ranks the right section first on 33 questions
+  where BM25 does not, and BM25 on 21 where dense does not. Fusing them gets the right section first on
+  131 of 177: Recall@1 0.7401 vs 0.6893 (dense) and 0.6215
+  (BM25), MRR 0.8278 vs 0.7880 and 0.7314. For Recall@5 hybrid only ties dense overall
+  (0.9435 each); on dev dense is higher (0.9577 vs 0.9296) and on
+  test hybrid is higher (0.9528 vs 0.9340). The best config by Recall@5 and MRR
+  is `hybrid_rrf`.
+- **Remaining misses** (hybrid, not in the top 5): 10 of 177 questions (q017, q045, q050, q099, q100, q121, q151, q152, q155, q158). The
+  clearest case is q050, "pause the program for two seconds": G4 Dwell is outranked by M0/M1 *Program Pause* and M60
+  *Pallet Change Pause*, which use the word "pause". It also shows a failure mode of RRF: `bm25_only` ranks G4 *first*,
+  but G4 is not among dense's top 50 chunks, so it gets only one RRF term (about 1/61), while M60 and M0/M1 are near the
+  top of *both* lists and get two terms each (about 2/62).
 
 **Validator on the example programs** ([results/validator_report.json](results/validator_report.json)): all 7
 examples match their expected outcome. The 3 valid programs (a LinuxCNC pocket, a peck-drilling pattern and a Haas
@@ -234,17 +267,16 @@ The full log with timestamps is in [docs/DECISIONS.md](docs/DECISIONS.md). The m
 - **Retrieval-only fallback.** Every LLM path is tested with a scripted `FakeLLM`, and the app degrades gracefully
   to showing cited passages when no LLM is configured. The measured answer evaluation uses a free local model
   (`qwen2.5-coder:7b` via Ollama), so no paid API is needed.
-- **Honest evaluation.** The gold ids were fixed before the first run. Hybrid met the 0.75 Recall@5 target on the
-  first run, so no retrieval tuning was done against the test set.
+- **Honest evaluation.** The gold ids and keywords are fixed before results are computed. Tuning used only the dev split and kept nothing, and the held-out test split is run once at the end.
 
 ## Limitations
 
-- Keyword accuracy is a proxy, not a human evaluation, and the local 7B model cites passages in only 11 of 56 answers (see Results).
+- Keyword accuracy is a proxy, not a human evaluation, and the citation rate only shows that a source is attached (19 of 177 answers were `NOT_IN_DOCS` refusals).
 - The corpus covers LinuxCNC only. Haas questions are answered from LinuxCNC text, and the two dialects differ in
   places (for example canned-cycle details and the codes available).
 - The validator does not interpret `#` parameters, expressions or o-code control flow (W106), and it does not check
   cutter compensation or tool-length geometry.
-- The 56 questions were written by the builder, not collected from real users.
+- The 177 questions were written by the builder, not collected from real users, and the dev/test split is random, so the two halves differ by chance (test scored higher than dev).
 
 ## License
 

@@ -11,6 +11,7 @@ from typing import Any, Literal
 
 from gcoderag.index import Hit, HybridRetriever
 from gcoderag.llm import LLM, provider_and_model
+from gcoderag.textnorm import extract_codes
 
 logger = logging.getLogger(__name__)
 
@@ -21,10 +22,14 @@ EVAL_SLEEP_S = 0.5
 SYSTEM_PROMPT = (
     "You are a CNC programming assistant. Answer ONLY from the numbered passages. Cite passages as [1], [2]. "
     "Keep answers under 120 words. If the passages do not contain the answer, reply exactly: "
-    f"{NOT_IN_DOCS}: <one sentence saying what is missing>."
+    f"{NOT_IN_DOCS}: <one sentence saying what is missing>. "
+    "Otherwise end your reply with one last line listing the passage numbers you used, for example: SOURCES: 1, 3"
 )
 RETRIEVAL_ONLY_HEADER = "Top passages from the documentation:"
 _CITATION_RE = re.compile(r"\[(\d+)\]")
+# "SOURCES: 1, 3" on its own line, or tacked onto the end of the last sentence ("... in seconds. SOURCES: 1")
+_SOURCES_RE = re.compile(r"(?:^|[ \t]+)SOURCES?[ \t]*:[ \t]*((?:\[?\d+\]?(?:[ \t]*(?:,|;|and)[ \t]*)?)+)[ \t]*$",
+                         re.IGNORECASE | re.MULTILINE)
 
 
 @dataclass
@@ -60,6 +65,26 @@ def cited_numbers(text: str, n_passages: int) -> list[int]:
     return list(dict.fromkeys(n for n in numbers if 1 <= n <= n_passages))
 
 
+def split_sources(text: str, n_passages: int) -> tuple[str, list[int]]:
+    """Remove `SOURCES: 1, 3` lines from `text`; return the cleaned text and the valid passage numbers listed."""
+    numbers: list[int] = []
+    for match in _SOURCES_RE.finditer(text):
+        numbers += [int(n) for n in re.findall(r"\d+", match.group(1))]
+    cleaned = _SOURCES_RE.sub("", text).strip()
+    return cleaned, list(dict.fromkeys(n for n in numbers if 1 <= n <= n_passages))
+
+
+def choose_citations(text: str, passages: list[Hit], listed: list[int]) -> list[Hit]:
+    """Deterministic citations: the SOURCES numbers, else [n] markers, else passages whose codes the answer
+    mentions, else the top passage."""
+    numbers = listed or cited_numbers(text, len(passages))
+    if numbers:
+        return [passages[n - 1] for n in numbers]
+    mentioned = set(extract_codes(text))
+    by_code = [p for p in passages if mentioned & set(p.codes)]
+    return by_code or passages[:1]
+
+
 class RagPipeline:
     """Retrieve passages and (optionally) have an LLM answer from them with citations."""
 
@@ -77,9 +102,10 @@ class RagPipeline:
             return Answer("\n".join(lines).strip(), list(passages), True, "retrieval-only", passages)
         user = f"{format_passages(passages)}\n\nQuestion: {question}"
         text = self.llm.complete(SYSTEM_PROMPT, user, max_tokens=ANSWER_MAX_TOKENS, temperature=0.0).strip()
-        numbers = cited_numbers(text, len(passages))
-        grounded = not text.startswith(NOT_IN_DOCS) and bool(numbers)
-        return Answer(text, [passages[n - 1] for n in numbers], grounded, "llm", passages)
+        text, listed = split_sources(text, len(passages))
+        if text.startswith(NOT_IN_DOCS):
+            return Answer(text, [], False, "llm", passages)
+        return Answer(text, choose_citations(text, passages, listed), True, "llm", passages)
 
 
 def run_answer_eval(questions: list[Any], retriever: HybridRetriever, llm: LLM, answers_path: Path,
@@ -89,7 +115,6 @@ def run_answer_eval(questions: list[Any], retriever: HybridRetriever, llm: LLM, 
 
     pipeline = RagPipeline(retriever, llm)
     rows: list[dict[str, Any]] = []
-    passes = 0
     for i, q in enumerate(questions):
         if i:
             time.sleep(sleep_s)
@@ -99,11 +124,18 @@ def run_answer_eval(questions: list[Any], retriever: HybridRetriever, llm: LLM, 
             logger.error("answer eval aborted at %s: %s", q.id, exc)
             return {"status": "skipped_no_llm_key", "reason": f"LLM error after retries: {type(exc).__name__}"}
         passed = keywords_present(answer.text, q.answer_keywords)
-        passes += passed
-        rows.append({"id": q.id, "question": q.question, "answer": answer.text,
+        rows.append({"id": q.id, "split": getattr(q, "split", "test"), "question": q.question, "answer": answer.text,
                      "citations": [h.doc_id for h in answer.citations], "passed": passed})
     answers_path.parent.mkdir(parents=True, exist_ok=True)
-    answers_path.write_text("".join(json.dumps(r, ensure_ascii=False) + "\n" for r in rows), encoding="utf-8")
+    answers_path.write_bytes("".join(json.dumps(r, ensure_ascii=False) + "\n" for r in rows).encode("utf-8"))
     provider, model = provider_and_model(llm)
-    return {"status": "done", "config": "hybrid_rrf", "provider": provider, "model": model, "n": len(questions),
-            "keyword_accuracy": round(passes / len(questions), 4)}
+    return {"status": "done", "config": "hybrid_rrf", "provider": provider, "model": model, **summarize_answers(rows),
+            "by_split": {split: summarize_answers([r for r in rows if r["split"] == split])
+                         for split in ("dev", "test") if any(r["split"] == split for r in rows)}}
+
+
+def summarize_answers(rows: list[dict[str, Any]]) -> dict[str, Any]:
+    """n, keyword accuracy and citation rate (share of answers with at least one citation) for answer rows."""
+    n = len(rows)
+    return {"n": n, "keyword_accuracy": round(sum(bool(r["passed"]) for r in rows) / n, 4),
+            "citation_rate": round(sum(bool(r["citations"]) for r in rows) / n, 4)}
