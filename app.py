@@ -178,7 +178,11 @@ def main() -> None:
     retriever = load_retriever()          # builds and saves data/index/ when it is missing
     llm = get_llm_from_env()
     logger.info("LLM: %s", llm.name if llm else "none (retrieval-only mode)")
-    generator = GcodeGenerator(retriever, llm, GcodeValidator()) if llm else None
+    generator = None
+    if llm:
+        from gcoderag.examples import ExampleLibrary
+
+        generator = GcodeGenerator(retriever, llm, GcodeValidator(), ExampleLibrary.from_directory(retriever.embedder))
     build_app(RagPipeline(retriever, llm), generator, GcodeValidator).launch()
 
 

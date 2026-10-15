@@ -1,0 +1,24 @@
+%
+O00001 (dialect: haas)
+(request: Face a 3.0 x 2.0 inch block 0.02 inch deep with a 2 inch face mill on the Haas mill)
+G20 G90 G17 G40 G49 G80
+T1 M06
+G54
+G43 H01 Z1.
+S2500 M03
+M08
+G00 X-1.2 Y0.
+G00 Z0.1
+G01 Z-0.02 F20.
+G01 X4.2 F40.
+G00 Z0.1
+G00 X-1.2 Y1.6
+G01 Z-0.02 F20.
+G01 X4.2 F40.
+G00 Z1.
+M09
+M05
+G28 G91 Z0.
+G90
+M30
+%

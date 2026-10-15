@@ -45,6 +45,7 @@ def _cmd_ask(args: argparse.Namespace) -> int:
 
 def _cmd_generate(args: argparse.Namespace) -> int:
     """Generate a validated G-code program (requires an LLM key)."""
+    from gcoderag.examples import ExampleLibrary
     from gcoderag.generator import GcodeGenerator
     from gcoderag.index import load_retriever
     from gcoderag.llm import get_llm_from_env
@@ -54,7 +55,9 @@ def _cmd_generate(args: argparse.Namespace) -> int:
     if llm is None:
         print("No LLM key configured: generation needs LLM_PROVIDER and LLM_API_KEY in .env", file=sys.stderr)
         return 2
-    result = GcodeGenerator(load_retriever(), llm, GcodeValidator(args.dialect)).generate(args.request, args.dialect)
+    retriever = load_retriever()
+    library = ExampleLibrary.from_directory(retriever.embedder)
+    result = GcodeGenerator(retriever, llm, GcodeValidator(args.dialect), library).generate(args.request, args.dialect)
     print(result.program)
     print(f"\n(attempts: {result.attempts})\n{result.report.summary()}")
     return 0 if result.report.ok else 1

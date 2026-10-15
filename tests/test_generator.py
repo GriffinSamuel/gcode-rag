@@ -81,3 +81,48 @@ def test_extract_program_variants() -> None:
     assert extract_program("```\nG0 X1\n```") == "G0 X1"
     assert extract_program("```text\nnotes\n```\n```nc\nG1 X2\n```") == "G1 X2"
     assert extract_program("G0 X3") == "G0 X3"
+
+
+WARN_ONLY = """```gcode
+G90 G17
+T1 M6
+S10000 M3
+G0 Z5
+G1 Z-1 F200
+G1 X20
+G0 Z5
+M5
+M30
+```"""
+
+
+def test_warning_feedback_second_request_cleans_program(toy_retriever) -> None:
+    gen, llm = make_generator(toy_retriever, [WARN_ONLY, VALID])
+    result = gen.generate("cut a line")
+    assert result.attempts == 2 and result.report.ok and result.report.warnings == []
+    assert [(h["n_errors"], h["n_warnings"]) for h in result.history] == [(0, 1), (0, 0)]
+    assert result.history[0]["warnings"][0].startswith("W105")
+    retry = llm.calls[1]["user"]
+    assert "The program is valid but has these warnings; fix them if possible and return the complete program:" in retry
+    assert "W105" in retry and "Your previous program" in retry
+
+
+def test_warning_request_is_sent_only_once(toy_retriever) -> None:
+    gen, llm = make_generator(toy_retriever, [WARN_ONLY])
+    result = gen.generate("cut a line", max_attempts=3)
+    assert result.attempts == 2 and len(llm.calls) == 2
+    assert result.report.ok and len(result.report.warnings) == 1
+
+
+def test_no_warning_request_when_no_attempts_remain(toy_retriever) -> None:
+    gen, llm = make_generator(toy_retriever, [WARN_ONLY, VALID])
+    result = gen.generate("cut a line", max_attempts=1)
+    assert result.attempts == 1 and len(llm.calls) == 1 and len(result.report.warnings) == 1
+
+
+def test_worse_retry_does_not_replace_better_program(toy_retriever) -> None:
+    gen, _ = make_generator(toy_retriever, [WARN_ONLY, INVALID])
+    result = gen.generate("cut a line")
+    assert result.attempts == 3
+    assert result.report.ok and len(result.report.warnings) == 1 and result.program.startswith("G90 G17")
+    assert [h["n_errors"] > 0 for h in result.history] == [False, True, True]

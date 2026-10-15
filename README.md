@@ -46,7 +46,9 @@ Headline numbers (from [results/results.json](results/results.json)): on the **h
 | `gcoderag/textnorm.py` | `normalize_codes` (`G01`/`g 01` -> `G1`, `G38.2` unchanged) applied to chunks *and* queries |
 | `gcoderag/index.py` | `DenseIndex`, `BM25Index`, `HybridRetriever` (RRF, ties broken by dense score) |
 | `gcoderag/rag.py` | Grounded answers with `[n]` citations and a `NOT_IN_DOCS` refusal |
-| `gcoderag/generator.py` | Generate, validate, then retry with the validator's error list |
+| `gcoderag/generator.py` | Generate, validate, retry with the error list, then one more request to fix any warnings; returns the best attempt |
+| `gcoderag/examples.py` | Library of 8 validator-clean programs (`examples/library/`); the 2 most similar to a request go into the generation prompt |
+| `gcoderag/genbench.py` | Generation benchmark logic (`scripts/run_gen_eval.py`, `eval/gen_requests.jsonl`) |
 | `gcoderag/validator.py` | Parser + modal-state machine + 16 rules; CLI `python -m gcoderag.validator` |
 | `gcoderag/evaluate.py` | Recall@k, MRR, and the keyword-accuracy answer evaluation |
 | `app.py` | Gradio UI; rebuilds missing corpus/index data at startup |
@@ -242,6 +244,44 @@ text names a G/M code:
 examples match their expected outcome. The 3 valid programs (a LinuxCNC pocket, a peck-drilling pattern and a Haas
 facing program) have 0 errors and 0 warnings. The 4 invalid ones are flagged with exactly the intended rules
 (E005, E004, E003, and E006 + E009).
+
+### Generation benchmark
+
+30 requests ([eval/gen_requests.jsonl](eval/gen_requests.jsonl): 22 LinuxCNC and 8 Haas, metric and inch, different
+sizes, depths, tools and speeds) are sent to the generator with `qwen2.5-coder:7b` (up to 3 attempts, then the validator
+decides). One run without the example library (`--no-examples`) and one with it (the 2 most similar of the 8 programs in
+`examples/library/` are added to the prompt). Results: [results/gen_results.json](results/gen_results.json).
+
+| examples in prompt | n | first_attempt_ok | final_ok | mean attempts | mean warnings | zero-warning rate | cuts below Z0 |
+| --- | --- | --- | --- | --- | --- | --- | --- |
+| no | 30 | 0.7667 | 0.9667 | 1.6667 | 0.4000 | 0.6000 | 0.9667 |
+| yes (2 similar programs) | 30 | 0.9333 | 1.0000 | 1.0667 | 0.0000 | 1.0000 | 1.0000 |
+
+Columns: **first_attempt_ok** is the share of requests whose very first program had no validator errors;
+**final_ok** the share whose returned program has no errors after the retries; **mean attempts** the average number of
+LLM calls (a warning-fix request counts as an attempt); **mean warnings** the average number of validator warnings left
+in the returned program and **zero-warning rate** the share that is completely clean; **cuts below Z0** the share whose
+final program has a feed move (or canned cycle) that ends below Z0, i.e. it actually cuts material.
+
+First-attempt pass rate went from **0.7667** to **0.9333** with
+examples. Without examples, the leftover warnings were {'W103': 1, 'W102': 3, 'W104': 8} (W104 is "Haas program not wrapped in `%` with an
+`O` number": all 8 Haas requests kept it even after the warning-fix request), 1 request
+failed outright (g21) and 1 program never cut (g07). With examples
+every program passed after the retries, with no warnings left, and the only first-attempt failures were
+g13, g14.
+
+How far to trust this: the validator checks rules (feed set, modal groups, envelope, Haas wrapping, and so on), not
+geometry, so "ok" does not mean the part is the right size; the benchmark is 30 requests from one local 7B model, one
+run each; and the 8 library programs cover the same kinds of job as the requests (face, pocket, drill, peck drill,
+contour, engraving), so the gain is for requests *like* the library, and the examples mostly teach the model the exact
+program format (for Haas: the `%`/`O` wrapper).
+
+Run it yourself (needs an LLM, see `scripts/check_env.py`):
+
+```bash
+.venv/Scripts/python.exe scripts/run_gen_eval.py --no-examples   # run "without_examples"
+.venv/Scripts/python.exe scripts/run_gen_eval.py                 # run "with_examples"
+```
 
 ## Safety
 

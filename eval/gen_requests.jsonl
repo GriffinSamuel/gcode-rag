@@ -1,0 +1,30 @@
+{"id": "g01", "dialect": "linuxcnc", "request": "Face the top of a 120 x 80 mm aluminium block 0.5 mm deep with a 50 mm face mill at 3000 rpm."}
+{"id": "g02", "dialect": "linuxcnc", "request": "Mill a 30 x 30 mm square pocket 4 mm deep in two passes with a 6 mm end mill at 9000 rpm."}
+{"id": "g03", "dialect": "linuxcnc", "request": "Drill four 6 mm holes 12 mm deep at the corners of an 80 mm square centred on the origin."}
+{"id": "g04", "dialect": "linuxcnc", "request": "Peck drill five 5 mm holes 25 mm deep in a straight line along X, 20 mm apart, with 4 mm pecks."}
+{"id": "g05", "dialect": "linuxcnc", "request": "Cut the outside contour of a 50 x 30 mm rectangle 5 mm deep with cutter compensation, using a 6 mm end mill."}
+{"id": "g06", "dialect": "linuxcnc", "request": "Engrave a single-stroke letter T, 15 mm tall and 10 mm wide, 0.3 mm deep with a V-bit."}
+{"id": "g07", "dialect": "linuxcnc", "request": "Mill a 25 mm diameter circular pocket 3 mm deep using arcs with a 6 mm end mill."}
+{"id": "g08", "dialect": "linuxcnc", "request": "Cut a straight slot 60 mm long, 6 mm wide and 4 mm deep along the X axis with a 6 mm end mill."}
+{"id": "g09", "dialect": "linuxcnc", "request": "Drill a single 10 mm hole 15 mm deep in the middle of the part at 1200 rpm."}
+{"id": "g10", "dialect": "linuxcnc", "request": "Mill a 20 mm wide step along the full 100 mm edge of a block, 2 mm deep, in one pass with a 10 mm end mill."}
+{"id": "g11", "dialect": "linuxcnc", "request": "Drill a row of three 4 mm holes 10 mm deep, 15 mm apart, then return the tool to a safe height."}
+{"id": "g12", "dialect": "linuxcnc", "request": "Chamfer the top edge of a 40 mm square boss with a 45 degree chamfer tool, 1 mm deep, going around once."}
+{"id": "g13", "dialect": "linuxcnc", "request": "Face a 4 x 3 inch plate 0.02 inch deep with a 2 inch face mill at 2500 rpm, working in inches."}
+{"id": "g14", "dialect": "linuxcnc", "request": "Mill a 1.5 inch square pocket 0.25 inch deep with a 0.25 inch end mill, in inches, in two passes."}
+{"id": "g15", "dialect": "linuxcnc", "request": "Drill four 0.25 inch holes 0.5 inch deep at the corners of a 2 inch square, working in inches."}
+{"id": "g16", "dialect": "linuxcnc", "request": "Cut a 2 inch long, 0.25 inch wide slot 0.125 inch deep along the Y axis, in inches."}
+{"id": "g17", "dialect": "linuxcnc", "request": "Drill two 8 mm holes 30 mm deep, 50 mm apart, using a peck cycle with 5 mm pecks and coolant on."}
+{"id": "g18", "dialect": "linuxcnc", "request": "Mill a 70 x 40 mm outside profile 6 mm deep in two depth passes with a 8 mm end mill at 7000 rpm."}
+{"id": "g19", "dialect": "linuxcnc", "request": "Engrave the letters HI in single strokes, each 12 mm tall, 0.2 mm deep, side by side."}
+{"id": "g20", "dialect": "linuxcnc", "request": "Face a 200 x 100 mm steel plate 0.3 mm deep with a 63 mm face mill at 1200 rpm and slow feed."}
+{"id": "g21", "dialect": "linuxcnc", "request": "Drill a 3 x 3 grid of 4 mm holes, 20 mm spacing, 8 mm deep, using the simple drilling cycle."}
+{"id": "g22", "dialect": "linuxcnc", "request": "Mill a 15 mm radius rounded corner on a 60 mm square outside profile, 4 mm deep, using arcs."}
+{"id": "g23", "dialect": "haas", "request": "Face a 3 x 2 inch block 0.03 inch deep with a 2 inch face mill at 2800 rpm."}
+{"id": "g24", "dialect": "haas", "request": "Drill four 0.25 inch holes 0.6 inch deep at the corners of a 1.5 inch square using the simple drilling cycle."}
+{"id": "g25", "dialect": "haas", "request": "Peck drill three 0.3 inch holes 1 inch deep in a row, 1 inch apart, with 0.2 inch pecks and coolant on."}
+{"id": "g26", "dialect": "haas", "request": "Mill a 1 inch square pocket 0.2 inch deep with a 0.25 inch end mill at 8000 rpm in two passes."}
+{"id": "g27", "dialect": "haas", "request": "Cut a 3 inch long, 0.25 inch wide slot 0.15 inch deep along X with a 0.25 inch end mill."}
+{"id": "g28", "dialect": "haas", "request": "Cut the outside profile of a 2 x 1.5 inch rectangle 0.25 inch deep with a 0.5 inch end mill and cutter compensation."}
+{"id": "g29", "dialect": "haas", "request": "Drill one 0.5 inch hole 1 inch deep in the centre of a plate at 1500 rpm and return to the home position."}
+{"id": "g30", "dialect": "haas", "request": "Face a 100 x 60 mm block 0.5 mm deep with a 50 mm face mill, working in metric on the Haas."}

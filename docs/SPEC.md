@@ -40,21 +40,28 @@ gcode-rag/
     llm.py                     # section 6.1
     rag.py                     # section 6.2
     generator.py               # section 6.3
+    examples.py                # section 6.4: example library + few-shot retrieval
+    genbench.py                # section 6.5: generation benchmark logic
     validator.py               # section 7 (also runnable: python -m gcoderag.validator)
     evaluate.py                # section 5
     cli.py                     # python -m gcoderag.cli {search,ask,generate,validate}
   scripts/
     check_env.py  build_corpus.py  build_index.py  run_eval.py  validate_examples.py  verify_done.py
+    check_questions.py         # validates eval/questions.jsonl (docs/EVAL.md section 8)
+    run_gen_eval.py            # generation benchmark (section 6.5)
   tests/
     fixtures/linuxcnc_snippet.adoc  fixtures/haas_snippet.html  fixtures/toy_corpus.jsonl
     test_smoke.py test_linuxcnc_parser.py test_chunker.py test_textnorm.py test_embed.py test_index.py
     test_evaluate.py test_llm.py test_rag.py test_validator.py test_generator.py test_app.py
-  eval/questions.jsonl
-  examples/*.nc
+    test_example_library.py test_genbench.py test_examples.py
+  eval/questions.jsonl         # 177 questions with a dev/test split (docs/EVAL.md)
+  eval/gen_requests.jsonl      # 30 generation requests: id, dialect, request (section 6.5)
+  examples/*.nc                # validator examples (section 7.5)
+  examples/library/*.nc        # 8 validator-clean few-shot programs (section 6.4)
   data/raw/linuxcnc/*.adoc  data/raw/haas/*.html  data/raw/haas/STATUS.json      (gitignored)
   data/corpus/docs.jsonl  data/corpus/chunks.jsonl  data/corpus/stats.json       (gitignored)
   data/index/embeddings.npy  data/index/meta.json                                (gitignored)
-  results/results.json  results/results.md  results/validator_report.json  results/answers.jsonl (committed)
+  results/results.json  results/results.md  results/validator_report.json  results/answers.jsonl  results/gen_results.json (committed)
   deploy/README_HF.md
   docs/SPEC.md  docs/EVAL.md  docs/DEPLOY.md  docs/DECISIONS.md
 ```
@@ -322,16 +329,63 @@ class RagPipeline:
 @dataclass
 class GenResult: program: str; report: ValidationReport; attempts: int; dialect: str; history: list[dict]
 class GcodeGenerator:
-    def __init__(self, retriever, llm: LLM, validator: GcodeValidator)
+    def __init__(self, retriever, llm: LLM, validator: GcodeValidator, library: ExampleLibrary | None = None)
     def generate(self, request: str, dialect: Literal["linuxcnc", "haas"] = "linuxcnc", max_attempts: int = 3) -> GenResult
 ```
 - Retrieve 6 passages for the request (hybrid) to ground the codes used.
 - System prompt states the dialect rules: units line (G21 or G20), G90, G17, tool change (T1 M6), spindle `S<rpm> M3`,
   feed `F` before the first G1/G2/G3, safe Z retract (G0 Z5 or higher) before XY rapids, `M5` then `M30` at the end;
   Haas: wrap with `%`, start with `O00001`; stay within the envelope; output ONLY the program inside a ```gcode fence.
-- Extract the fenced block; run the validator; if `report.ok`, return. Else append the error list to the user message
-  ("Fix these validation errors and return the complete corrected program:") and retry. `attempts` = number of LLM calls.
+- Extract the fenced block and run the validator. With errors: append the error list to the user message ("Fix these
+  validation errors and return the complete corrected program:") and retry. With no errors but with warnings, and
+  attempts remaining: send ONE more request ("The program is valid but has these warnings; fix them if possible and
+  return the complete program: <warnings>"). `attempts` = number of LLM calls (at most `max_attempts`).
+- The result is the best attempt by (number of errors, number of warnings), so a clean program is never lost to a
+  worse retry. `GenResult.history` has one dict per LLM call with `attempt`, `program`, `ok`, `errors`, `warnings`
+  (text) and `n_errors`, `n_warnings`.
+- With a `library`, the user message includes the 2 most similar library programs under "Reference programs that
+  passed validation:" (section 6.4), after the reference passages and before the request.
 - If `llm is None`, raise `RuntimeError("LLM not configured")` (the app shows a friendly message instead).
+
+### 6.4 `gcoderag/examples.py` and `examples/library/`
+
+`examples/library/*.nc` holds 8 programs that validate with 0 errors and 0 warnings in their own dialect: LinuxCNC face
+a block, square pocket, drill pattern (G81), peck drill (G83), rectangular contour with cutter compensation,
+single-stroke engraving; Haas face a block and drill pattern. Each starts with `(dialect: ...)` and `(request: ...)`
+header comments; the request text is what gets embedded.
+
+```python
+@dataclass(frozen=True)
+class Example: name: str; dialect: str; request: str; program: str
+def load_examples(directory: Path | None = None) -> list[Example]
+class ExampleLibrary:
+    def __init__(self, examples: list[Example], embedder: Embedder)        # embeds normalize_codes(request) once
+    @classmethod
+    def from_directory(cls, embedder, directory=None) -> ExampleLibrary
+    def similar(self, request: str, k: int = 2, dialect: str | None = None) -> list[Example]   # cosine, best first
+```
+With `dialect`, same-dialect examples are ranked before the others. `app.py` and `cli generate` build the library with
+the retriever's embedder.
+
+### 6.5 Generation benchmark (`gcoderag/genbench.py`, `scripts/run_gen_eval.py`, `eval/gen_requests.jsonl`)
+
+`eval/gen_requests.jsonl`: 30 requests, one JSON object per line (`id` g01-g30, `dialect`, `request`), covering sizes,
+depths, tools, speeds, metric and inch, LinuxCNC (22) and Haas (8). `scripts/run_gen_eval.py` runs the generator on each
+request (3 attempts max) and writes `results/gen_results.json`:
+
+```json
+{"runs": {"without_examples": {"label": "...", "generated_at": "...", "model": "...", "examples": false, "n": 30,
+                               "first_attempt_ok_rate": 0.0, "final_ok_rate": 0.0, "mean_attempts": 0.0,
+                               "mean_warnings_final": 0.0, "zero_warning_rate": 0.0, "feed_below_z0_rate": 0.0,
+                               "requests": [{"id": "g01", "first_attempt_ok": true, "final_ok": true, "attempts": 1,
+                                             "warnings_final": 0, "feed_below_z0": true, "errors_final": [],
+                                             "program": "..."}]},
+          "with_examples": {"...": "same shape, examples: true"}}}
+```
+`--no-examples` produces the `without_examples` run, the default produces `with_examples`; each run replaces only its
+own entry. `first_attempt_ok` = no validator errors on attempt 1; `final_ok` = no errors in the returned program;
+`warnings_final` = warnings in the returned program; `feed_below_z0` = the final program has a feed move (G1/G2/G3 or
+a canned cycle) ending below Z0, i.e. it actually cuts. A request whose LLM call fails counts as not ok.
 
 ## 7. Validator (`gcoderag/validator.py`) - deterministic, no LLM, no network
 
